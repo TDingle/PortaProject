@@ -3,7 +3,8 @@
 #define SDL_MAIN_HANDLED
 #include "SDL/SDL.h"
 
-#include "input.h" // for PollEvents()
+#include "input.h"
+#include "audio.h"
 
 bool ShouldCloseWindow() {
     SDL_Event event;
@@ -38,11 +39,15 @@ int main(int argc, char* argv[]) {
         SDL_WINDOWPOS_CENTERED,
         800, 600, 0);
 
+    InitMusic();
+
     while (!ShouldCloseWindow()) {
         PollInputs();
 
     }
 
+
+    SDL_Quit();
 
     return 0;
 }
