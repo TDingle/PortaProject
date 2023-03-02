@@ -3,6 +3,26 @@
 #define SDL_MAIN_HANDLED
 #include "SDL/SDL.h"
 
+#include "input.h" // for PollEvents()
+
+bool ShouldCloseWindow() {
+    SDL_Event event;
+    // poll specifically for window close events
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
+        // handling of X button on window and ESC key closing the game
+        case SDL_QUIT: {
+            return true;
+        } break;
+        case SDL_KEYDOWN: {
+            if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
+                return true;
+            }
+        } break;
+        }
+    }
+    return false;
+}
 
 
 int main(int argc, char* argv[]) {
@@ -18,31 +38,9 @@ int main(int argc, char* argv[]) {
         SDL_WINDOWPOS_CENTERED,
         800, 600, 0);
 
-    bool close = false;
-    while (!close) {
+    while (!ShouldCloseWindow()) {
+        PollInputs();
 
-
-        SDL_Event event;
-
-        // Events management
-        while (SDL_PollEvent(&event)) {
-            switch (event.type) {
-
-            case SDL_QUIT:
-                // handling of close button
-                close = true;
-                break;
-            case SDL_KEYDOWN:
-                switch (event.key.keysym.scancode) {
-                case SDL_SCANCODE_ESCAPE: {
-                    close = true;
-                }
-                }
-                break;
-            default:
-                break;
-            }
-        }
     }
 
 
