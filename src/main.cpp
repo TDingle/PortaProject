@@ -51,33 +51,12 @@ int main(int argc, char* argv[]) {
         800, 600, 0);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
 
-    InitMusic();
+    //InitMusic();
 
-    Text testText = Text("KenneyMini.ttf", 30, 129, 29, 95, 255);
+    //Text testText = Text("KenneyMini.ttf", 30, 129, 29, 95, 255);
 
-    SDL_Rect testSprRect;//rect draws in pixels
-    SDL_Rect testPosRect;
-    testSprRect.x = 0;
-    testSprRect.y = 0;
-    testSprRect.w = 18;
-    testSprRect.h = 18;
 
-    testPosRect.x = 0;
-    testPosRect.y = 0;
-    testPosRect.w = 18;
-    testPosRect.h = 18;
-
-    Sprite playGrid[10][20];
-    Sprite TestSprite = Sprite("Assets/otherBlocks.png", testSprRect, testPosRect);
-    for (int row = 0; row < 10; row++) {
-        for (int col = 0; col < 20; col++) {
-            playGrid[row][col] = TestSprite;
-            playGrid[row][col].pos.x = row*18;
-            playGrid[row][col].pos.y = col*18;
-        }
-    }
-    
-
+    Sprite testBlock = Sprite("Assets/otherBlocks.png", 0, 0, 18, 18);
     
 
     while (!ShouldCloseWindow()) {
@@ -89,18 +68,20 @@ int main(int argc, char* argv[]) {
         // do rendering in here
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 20; col++) {
-                playGrid[row][col].Draw();
+                //playGrid[row][col].Draw();
                 
             }
             
         }
-        
-        testText.Draw("BRUH :)", 20, 20);
+        DrawBlock(testBlock, TetrisBlocks::I, Vector2Int(3, 3));
+
+        testBlock.Draw(0, 0, 20, 20);
+        //testText.Draw("BRUH :)", 20, 20);
         
         SDL_RenderPresent(renderer);
     }
 
-    testText.Delete();
+    //testText.Delete();
 
     SDL_Quit();
     IMG_Quit();

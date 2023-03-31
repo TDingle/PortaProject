@@ -33,7 +33,10 @@
     <ClCompile Include="include\SDL_FontCache.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sprite_renderer.cpp">
+    <ClCompile Include="src\sprite_renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tilemap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,7 +56,7 @@
     <ClInclude Include="include\SDL_FontCache.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sprite_renderer.h">
+    <ClInclude Include="src\sprite_renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
