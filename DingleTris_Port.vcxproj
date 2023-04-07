@@ -167,6 +167,7 @@
     <ClInclude Include="src\input.h" />
     <ClInclude Include="src\particle_system.h" />
     <ClInclude Include="src\text.h" />
+    <ClInclude Include="src\tilemap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

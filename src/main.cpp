@@ -8,6 +8,7 @@
 #include "input.h"
 #include "audio.h"
 #include "text.h"
+#include "tilemap.h"
 
 SDL_Window* window;
 SDL_Renderer* renderer;
@@ -50,15 +51,16 @@ int main(int argc, char* argv[]) {
         SDL_WINDOWPOS_CENTERED,
         800, 600, 0);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
-
+    initRenderer();
     //InitMusic();
 
     //Text testText = Text("KenneyMini.ttf", 30, 129, 29, 95, 255);
 
 
-    Sprite testBlock = Sprite("Assets/otherBlocks.png", 0, 0, 18, 18);
+    
     
 
+    InitTilemap();
     while (!ShouldCloseWindow()) {
         PollInputs();
 
@@ -66,16 +68,13 @@ int main(int argc, char* argv[]) {
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
         // do rendering in here
-        for (int row = 0; row < 10; row++) {
-            for (int col = 0; col < 20; col++) {
-                //playGrid[row][col].Draw();
-                
-            }
-            
-        }
-        DrawBlock(testBlock, TetrisBlocks::I, Vector2Int(3, 3));
+        
+        Tiletime();
+        UpdateGrid();
+        DrawTileMap();
+        //DrawBlock(TetrisBlocks::L, Vector2Int(3, 3));//want to be able to get sprite from the dictionary
 
-        testBlock.Draw(0, 0, 20, 20);
+        
         //testText.Draw("BRUH :)", 20, 20);
         
         SDL_RenderPresent(renderer);
