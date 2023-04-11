@@ -5,27 +5,31 @@
 #include <vector>
 extern SDL_Renderer* renderer;
 
+Vector2Int gridPosition = Vector2Int(0, 0);
 
-	//sprites rects for draw will have to be done for sprite sheets
-	Sprite::Sprite(const char* filename, int x, int y, int w, int h) {
-		sprite.x = x;
-		sprite.y = y;
-		sprite.w = w;
-		sprite.h = h;
+// sets the position of the tetris playgrid
+void SetGridPosition(Vector2Int pos) { gridPosition = pos; }
+
+//sprites rects for draw will have to be done for sprite sheets
+Sprite::Sprite(const char* filename, int x, int y, int w, int h) {
+	sprite.x = x;
+	sprite.y = y;
+	sprite.w = w;
+	sprite.h = h;
 
 		
-		texture = IMG_LoadTexture(renderer, filename);
-	}
-	void Sprite::Draw(int x, int y, int w, int h) {
-		SDL_Rect pos;
-		pos.x = x;
-		pos.y = y;
-		pos.w = w;
-		pos.h = h;
-		//position on screen
-		SDL_RenderCopy(renderer, texture, &sprite, &pos);
+	texture = IMG_LoadTexture(renderer, filename);
+}
+void Sprite::Draw(int x, int y, int w, int h) {
+	SDL_Rect pos;
+	pos.x = x;
+	pos.y = y;
+	pos.w = w;
+	pos.h = h;
+	//position on screen
+	SDL_RenderCopy(renderer, texture, &sprite, &pos);
 
-	}
+}
 
 	
 	
@@ -43,15 +47,15 @@ extern SDL_Renderer* renderer;
 
 	void initRenderer() {
 		sprites = {
-		{TetrisBlocks(I), {Sprite("Assets/linePiece.png", 0, 0, 18, 18)}},
-		{TetrisBlocks(J), {Sprite("Assets/otherBlocks.png", 0, 18, 18, 18)}},
-		{TetrisBlocks(L), {Sprite("Assets/otherBlocks.png", 18, 18, 18, 18)}},
-		{TetrisBlocks(O), {Sprite("Assets/otherBlocks.png", 36, 0, 18, 18)}},
-		{TetrisBlocks(S), {Sprite("Assets/otherBlocks.png", 36, 18, 18, 18)}},
-		{TetrisBlocks(T), {Sprite("Assets/otherBlocks.png", 18, 0, 18, 18)}},
-		{TetrisBlocks(Z), {Sprite("Assets/otherBlocks.png", 0, 36, 18, 18)}},
-		{TetrisBlocks(Wall),{Sprite("Assets/wall.png", 0, 0, 18, 18)}},
-		{TetrisBlocks(BG),{Sprite("Assets/otherBlocks.png", 18, 36, 18, 18)}},
+		{TetrisBlocks(I), {Sprite("Assets/linePiece.png", 0, 0, TILE_SIZE, TILE_SIZE)}},
+		{TetrisBlocks(J), {Sprite("Assets/otherBlocks.png", 0, TILE_SIZE, TILE_SIZE, TILE_SIZE)}},
+		{TetrisBlocks(L), {Sprite("Assets/otherBlocks.png", TILE_SIZE, TILE_SIZE, TILE_SIZE, TILE_SIZE)}},
+		{TetrisBlocks(O), {Sprite("Assets/otherBlocks.png", TILE_SIZE * 2, 0, TILE_SIZE, TILE_SIZE)}},
+		{TetrisBlocks(S), {Sprite("Assets/otherBlocks.png", TILE_SIZE * 2, TILE_SIZE, TILE_SIZE, TILE_SIZE)}},
+		{TetrisBlocks(T), {Sprite("Assets/otherBlocks.png", TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)}},
+		{TetrisBlocks(Z), {Sprite("Assets/otherBlocks.png", 0, TILE_SIZE * 2, TILE_SIZE, TILE_SIZE)}},
+		{TetrisBlocks(Wall),{Sprite("Assets/wall.png", 0, 0, TILE_SIZE, TILE_SIZE)}},
+		{TetrisBlocks(BG),{Sprite("Assets/otherBlocks.png", TILE_SIZE, TILE_SIZE * 2, TILE_SIZE, TILE_SIZE)}},
 		};
 	}
 
@@ -60,7 +64,7 @@ extern SDL_Renderer* renderer;
 	}
 
 	void DrawTile(Sprite sprite, Vector2Int tile) {
-		sprite.Draw(18 * tile.x, 18 * tile.y, 18, 18);
+		sprite.Draw(gridPosition.x + TILE_SIZE * tile.x, gridPosition.y + TILE_SIZE * tile.y, TILE_SIZE, TILE_SIZE);
 	}
 
 

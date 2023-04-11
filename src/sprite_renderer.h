@@ -2,6 +2,9 @@
 #include "SDL/SDL_image.h"
 #include <map>
 #include <vector>
+
+#define TILE_SIZE 18
+
 struct Sprite {
 	SDL_Texture* texture;
 	SDL_Rect sprite;
@@ -56,5 +59,5 @@ void DrawBlock(TetrisBlocks block, Vector2Int startTilePos);
 
 extern std::map<TetrisBlocks, std::vector<Vector2Int>> Cells;
 std::map<TetrisBlocks, Sprite> getSprites();
-
+void SetGridPosition(Vector2Int pos);
 void initRenderer();

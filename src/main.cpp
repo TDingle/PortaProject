@@ -13,6 +13,9 @@
 SDL_Window* window;
 SDL_Renderer* renderer;
 
+int screenWidth = 600;
+int screenHeight = 400;
+
 bool ShouldCloseWindow() {
     SDL_Event event;
     // poll specifically for window close events
@@ -49,38 +52,31 @@ int main(int argc, char* argv[]) {
     window = SDL_CreateWindow("DingleTris",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
-        800, 600, 0);
+        screenWidth, screenHeight, 0);
+    SDL_SetWindowResizable(window, SDL_FALSE);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
     initRenderer();
+
+    Vector2Int gridPosition = Vector2Int(screenWidth / 2.0 - (GRID_WIDTH*TILE_SIZE/2.0), screenHeight / 2.0 - (GRID_HEIGHT*TILE_SIZE/2.0));
+    SetGridPosition(gridPosition);
+    
     //InitMusic();
 
-    //Text testText = Text("KenneyMini.ttf", 30, 129, 29, 95, 255);
-
-
-    
-    
-
     InitTilemap();
+
     while (!ShouldCloseWindow()) {
         PollInputs();
 
-
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
-        // do rendering in here
-        
-        Tiletime();
-        UpdateGrid();
-        DrawTileMap();
-        //DrawBlock(TetrisBlocks::L, Vector2Int(3, 3));//want to be able to get sprite from the dictionary
-
-        
-        //testText.Draw("BRUH :)", 20, 20);
-        
+        { // rendering
+            Tiletime();
+            UpdateGrid();
+            DrawTileMap();
+        }
         SDL_RenderPresent(renderer);
     }
 
-    //testText.Delete();
 
     SDL_Quit();
     IMG_Quit();

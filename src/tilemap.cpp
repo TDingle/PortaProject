@@ -7,7 +7,7 @@
 #include "input.h"
 
 
-char tilemap[22][12] =//dont know how I will draw this
+char tilemap[GRID_HEIGHT][GRID_WIDTH] =
 {
 	{1,1,1,1,1,1,1,1,1,1,1,1},
 	{1,0,0,0,0,0,0,0,0,0,0,1},
@@ -34,8 +34,8 @@ char tilemap[22][12] =//dont know how I will draw this
 
 };
 void DrawTileMap() {
-	for (int row = 0; row < 22; row++) {
-		for (int col = 0; col < 12; col++) {
+	for (int row = 0; row < GRID_HEIGHT; row++) {
+		for (int col = 0; col < GRID_WIDTH; col++) {
 			TetrisBlocks blocktype = (TetrisBlocks)tilemap[row][col];
 			Sprite blockSprite = getSprites()[blocktype];
 			DrawTile(blockSprite, Vector2Int(col, row));
@@ -54,8 +54,8 @@ Block activeBlock;
 std::vector<Block> inactiveBlocks;
 
 void ClearGridExceptWalls() {
-	for (int row = 1; row < 22 - 1; row++) {
-		for (int col = 1; col < 12 - 1; col++) {
+	for (int row = 1; row < GRID_HEIGHT - 1; row++) {
+		for (int col = 1; col < GRID_WIDTH - 1; col++) {
 			tilemap[row][col] = 0;
 		}
 	}
@@ -85,7 +85,7 @@ Block CreatRandomBlockAtStartPos() {
 	Block b;
 	b.type = (TetrisBlocks)RandomRange(2, 8);
 	b.direction = 0;
-	b.pos = Vector2Int(12 / 2, 1);
+	b.pos = Vector2Int(GRID_WIDTH / 2, 1);
 	return b;
 }
 long long previousTime = 0;
