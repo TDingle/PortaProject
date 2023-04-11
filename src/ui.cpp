@@ -1,10 +1,24 @@
 #include "ui.h"
+#include <ctime>
 
 
 extern int screenWidth;
 extern int screenHeight;
 
 
+extern Block holdBlock;
+extern Block nextBlock;
+
+static Text uiText;
+
+void DrawBGSquareOnTileGrid(int left, int right, int top, int bottom) {
+    Sprite& bgSprite = getSprites()[TetrisBlocks::BG];
+    for (int x = left; x < right; x++) {
+        for (int y = top; y < bottom; y++) {
+            bgSprite.Draw(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        }
+    }
+}
 
 void DrawBlockBackground() {
     Sprite& wallSprite = getSprites()[TetrisBlocks::Wall];
@@ -15,17 +29,48 @@ void DrawBlockBackground() {
     }
 }
 void DrawHoldBox() {
-
+    DrawBGSquareOnTileGrid(1, 6, 1, 5);
+    uiText.Draw("HOLD", 2 * TILE_SIZE, TILE_SIZE - 7);
+    DrawBlockAtWorldPos(holdBlock.type, Vector2Int(TILE_SIZE * 3, 2 * TILE_SIZE + 10));
 }
 void DrawPrisonerBoxes() {
+    // LEFT PRISONER
+    DrawBGSquareOnTileGrid(1, 6, 6, 10);
 
+    // RIGHT PRISONER
+    DrawBGSquareOnTileGrid(screenWidth / TILE_SIZE - 6, screenWidth / TILE_SIZE - 1, 17, GRID_HEIGHT-1);
 }
 void DrawInfoBox() {
+    DrawBGSquareOnTileGrid(1, 6, 11, GRID_HEIGHT - 1);
 
+    // Score
+    uiText.Draw("SCORE:", TILE_SIZE + 5, 11 * TILE_SIZE);
+    // TODO: put actual score here
+    uiText.Draw("0", TILE_SIZE * 3, 13 * TILE_SIZE);
+
+    // Level
+    uiText.Draw("LEVEL:", TILE_SIZE + 5, 16 * TILE_SIZE);
+    // TODO: put actual level here
+    uiText.Draw("0", TILE_SIZE * 3, 18 * TILE_SIZE);
 }
 void DrawBabyBox() {
-
+    DrawBGSquareOnTileGrid(screenWidth/TILE_SIZE - 6, screenWidth / TILE_SIZE - 1, 1, 5);
 }
 void DrawNextBlockBox() {
+    DrawBGSquareOnTileGrid(screenWidth / TILE_SIZE - 6, screenWidth / TILE_SIZE - 1, 6, 16);
+    uiText.Draw("NEXT", screenWidth - (TILE_SIZE*5), TILE_SIZE*6);
+    DrawBlockAtWorldPos(nextBlock.type, Vector2Int(screenWidth - (TILE_SIZE*4), TILE_SIZE*9));
+}
 
+
+void DrawUI() {
+    if (!uiText.isValid()) {
+        uiText = Text("KenneyMini.ttf", 25, 129, 29, 95);
+    }
+    DrawBlockBackground();
+    DrawHoldBox();
+    DrawPrisonerBoxes();
+    DrawInfoBox();
+    DrawBabyBox();
+    DrawNextBlockBox();
 }

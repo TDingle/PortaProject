@@ -7,6 +7,11 @@
 #include "input.h"
 
 
+Block activeBlock;
+Block holdBlock;
+Block nextBlock;
+std::vector<Block> inactiveBlocks;
+
 char tilemap[GRID_HEIGHT][GRID_WIDTH] =
 {
 	{1,1,1,1,1,1,1,1,1,1,1,1},
@@ -42,16 +47,6 @@ void DrawTileMap() {
 		}
 	}
 }
-struct Block {
-	Block(){}
-	Vector2Int pos;
-	int direction;
-	TetrisBlocks type;
-	
-};
-
-Block activeBlock;
-std::vector<Block> inactiveBlocks;
 
 void ClearGridExceptWalls() {
 	for (int row = 1; row < GRID_HEIGHT - 1; row++) {

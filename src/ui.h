@@ -4,9 +4,4 @@
 #include "tilemap.h"
 #include "text.h"
 
-void DrawBlockBackground();
-void DrawHoldBox();
-void DrawPrisonerBoxes();
-void DrawInfoBox();
-void DrawBabyBox();
-void DrawNextBlockBox();
+void DrawUI();

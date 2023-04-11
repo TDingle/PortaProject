@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         screenWidth, screenHeight, 0);
-    SDL_SetWindowResizable(window, SDL_FALSE);
+    SDL_SetWindowResizable(window, SDL_FALSE); // disable window resizing
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
     initRenderer();
 
@@ -77,12 +77,7 @@ int main(int argc, char* argv[]) {
         SDL_SetRenderDrawColor(renderer, 240, 240, 179, 255);
         SDL_RenderClear(renderer);
         { // rendering
-            DrawBlockBackground();
-            DrawHoldBox();
-            DrawPrisonerBoxes();
-            DrawInfoBox();
-            DrawBabyBox();
-            DrawNextBlockBox();
+            DrawUI();
             DrawTileMap();
         }
         SDL_RenderPresent(renderer);

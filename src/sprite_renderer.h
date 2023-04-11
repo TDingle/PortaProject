@@ -16,6 +16,12 @@ struct Sprite {
 	void Draw(int x, int y, int w, int h);
 };
 
+struct Spritesheet {
+	Spritesheet(const char* filename, int spriteWidth, int spriteHeight);
+	void Draw(int x, int y, int w, int h);
+	std::vector<Sprite> sprites = {};
+};
+
 enum TetrisBlocks
 {
 	BG,
@@ -26,7 +32,9 @@ enum TetrisBlocks
 	J,
 	L,
 	S,
-	Z
+	Z,
+
+	NUM_BLOCKS
 };
 
 
@@ -47,11 +55,23 @@ struct Vector2Int {
 	bool operator==(Vector2Int other) {
 		return other.x == this->x && other.y == this->y;
 	}
+	Vector2Int operator*(Vector2Int other) {
+		other.x *= this->x;
+		other.y *= this->y;
+		return other;
+	}
+	Vector2Int operator*(int scalar) {
+		Vector2Int res = Vector2Int(0, 0);
+		res.x = this->x * scalar;
+		res.y = this->y * scalar;
+		return res;
+	}
 };
 
 void DrawTile(Sprite sprite, Vector2Int tile);
 
 void DrawBlock(TetrisBlocks block, Vector2Int startTilePos);
+void DrawBlockAtWorldPos(TetrisBlocks block, Vector2Int worldPos);
 
 extern std::map<TetrisBlocks, std::vector<Vector2Int>> Cells;
 

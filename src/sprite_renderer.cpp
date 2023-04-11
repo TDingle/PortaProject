@@ -31,6 +31,12 @@ void Sprite::Draw(int x, int y, int w, int h) {
 
 }
 
+Spritesheet::Spritesheet(const char* filename, int spriteWidth, int spriteHeight) {
+
+}
+void Spritesheet::Draw(int x, int y, int w, int h) {
+
+}
 	
 	
 std::map<TetrisBlocks, Sprite> sprites = {};
@@ -74,6 +80,14 @@ void DrawBlock(TetrisBlocks block, Vector2Int startTilePos) {
 		Vector2Int offset = currentBlockOffsets[i];
 		Vector2Int tileSpaceTile = startTilePos + offset;
 		DrawTile(sprites[block], tileSpaceTile);
+	}
+}
+void DrawBlockAtWorldPos(TetrisBlocks block, Vector2Int worldPos) {
+	std::vector<Vector2Int> currentBlockOffsets = Cells[block];
+	for (int i = 0; i < currentBlockOffsets.size(); i++) {
+		Vector2Int offset = currentBlockOffsets[i];
+		Vector2Int tilePos = worldPos + (offset*TILE_SIZE);
+		sprites[block].Draw(tilePos.x, tilePos.y, TILE_SIZE, TILE_SIZE);
 	}
 }
 
