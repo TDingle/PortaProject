@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
     while (!ShouldCloseWindow()) {
         PollInputs();
 
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_SetRenderDrawColor(renderer, 240, 240, 179, 255);
         SDL_RenderClear(renderer);
         { // rendering
             Tiletime();
