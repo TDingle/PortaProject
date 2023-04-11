@@ -33,49 +33,49 @@ void Sprite::Draw(int x, int y, int w, int h) {
 
 	
 	
-	std::map<TetrisBlocks, Sprite> sprites = {};
-	std::map<TetrisBlocks, std::vector<Vector2Int>> Cells =
-	{
-		{ TetrisBlocks(I), {Vector2Int(-1, 1), Vector2Int(0, 1), Vector2Int(1, 1), Vector2Int(2, 1)}},
-		{ TetrisBlocks(J), {Vector2Int(-1, 1),  Vector2Int(-1, 0), Vector2Int(0, 0), Vector2Int(1, 0)}},
-		{ TetrisBlocks(L), {Vector2Int(1, 1), Vector2Int(-1, 0), Vector2Int(0, 0), Vector2Int(1, 0)}},
-		{ TetrisBlocks(O), {Vector2Int(0, 1), Vector2Int(1, 1), Vector2Int(0, 0), Vector2Int(1, 0)}},
-		{ TetrisBlocks(S), {Vector2Int(0, 1), Vector2Int(1, 1), Vector2Int(-1, 0), Vector2Int(0, 0)}},
-		{ TetrisBlocks(T), {Vector2Int(0, 1), Vector2Int(-1, 0), Vector2Int(0, 0), Vector2Int(1, 0)}},
-		{ TetrisBlocks(Z), {Vector2Int(-1, 1), Vector2Int(0, 1), Vector2Int(0, 0), Vector2Int(1, 0)}},
+std::map<TetrisBlocks, Sprite> sprites = {};
+std::map<TetrisBlocks, std::vector<Vector2Int>> Cells =
+{
+	{ TetrisBlocks(I), {Vector2Int(-1, 1), Vector2Int(0, 1), Vector2Int(1, 1), Vector2Int(2, 1)}},
+	{ TetrisBlocks(J), {Vector2Int(-1, 1),  Vector2Int(-1, 0), Vector2Int(0, 0), Vector2Int(1, 0)}},
+	{ TetrisBlocks(L), {Vector2Int(1, 1), Vector2Int(-1, 0), Vector2Int(0, 0), Vector2Int(1, 0)}},
+	{ TetrisBlocks(O), {Vector2Int(0, 1), Vector2Int(1, 1), Vector2Int(0, 0), Vector2Int(1, 0)}},
+	{ TetrisBlocks(S), {Vector2Int(0, 1), Vector2Int(1, 1), Vector2Int(-1, 0), Vector2Int(0, 0)}},
+	{ TetrisBlocks(T), {Vector2Int(0, 1), Vector2Int(-1, 0), Vector2Int(0, 0), Vector2Int(1, 0)}},
+	{ TetrisBlocks(Z), {Vector2Int(-1, 1), Vector2Int(0, 1), Vector2Int(0, 0), Vector2Int(1, 0)}},
+};
+
+void initRenderer() {
+	sprites = {
+	{TetrisBlocks(I), {Sprite("Assets/linePiece.png", 0, 0, TILE_SIZE, TILE_SIZE)}},
+	{TetrisBlocks(J), {Sprite("Assets/otherBlocks.png", 0, TILE_SIZE, TILE_SIZE, TILE_SIZE)}},
+	{TetrisBlocks(L), {Sprite("Assets/otherBlocks.png", TILE_SIZE, TILE_SIZE, TILE_SIZE, TILE_SIZE)}},
+	{TetrisBlocks(O), {Sprite("Assets/otherBlocks.png", TILE_SIZE * 2, 0, TILE_SIZE, TILE_SIZE)}},
+	{TetrisBlocks(S), {Sprite("Assets/otherBlocks.png", TILE_SIZE * 2, TILE_SIZE, TILE_SIZE, TILE_SIZE)}},
+	{TetrisBlocks(T), {Sprite("Assets/otherBlocks.png", TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)}},
+	{TetrisBlocks(Z), {Sprite("Assets/otherBlocks.png", 0, TILE_SIZE * 2, TILE_SIZE, TILE_SIZE)}},
+	{TetrisBlocks(Wall),{Sprite("Assets/wall.png", 0, 0, TILE_SIZE, TILE_SIZE)}},
+	{TetrisBlocks(BG),{Sprite("Assets/otherBlocks.png", TILE_SIZE, TILE_SIZE * 2, TILE_SIZE, TILE_SIZE)}},
 	};
+}
 
-	void initRenderer() {
-		sprites = {
-		{TetrisBlocks(I), {Sprite("Assets/linePiece.png", 0, 0, TILE_SIZE, TILE_SIZE)}},
-		{TetrisBlocks(J), {Sprite("Assets/otherBlocks.png", 0, TILE_SIZE, TILE_SIZE, TILE_SIZE)}},
-		{TetrisBlocks(L), {Sprite("Assets/otherBlocks.png", TILE_SIZE, TILE_SIZE, TILE_SIZE, TILE_SIZE)}},
-		{TetrisBlocks(O), {Sprite("Assets/otherBlocks.png", TILE_SIZE * 2, 0, TILE_SIZE, TILE_SIZE)}},
-		{TetrisBlocks(S), {Sprite("Assets/otherBlocks.png", TILE_SIZE * 2, TILE_SIZE, TILE_SIZE, TILE_SIZE)}},
-		{TetrisBlocks(T), {Sprite("Assets/otherBlocks.png", TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)}},
-		{TetrisBlocks(Z), {Sprite("Assets/otherBlocks.png", 0, TILE_SIZE * 2, TILE_SIZE, TILE_SIZE)}},
-		{TetrisBlocks(Wall),{Sprite("Assets/wall.png", 0, 0, TILE_SIZE, TILE_SIZE)}},
-		{TetrisBlocks(BG),{Sprite("Assets/otherBlocks.png", TILE_SIZE, TILE_SIZE * 2, TILE_SIZE, TILE_SIZE)}},
-		};
+std::map<TetrisBlocks, Sprite>& getSprites() {
+	return sprites;
+}
+
+void DrawTile(Sprite sprite, Vector2Int tile) {
+	sprite.Draw(gridPosition.x + TILE_SIZE * tile.x, gridPosition.y + TILE_SIZE * tile.y, TILE_SIZE, TILE_SIZE);
+}
+
+
+void DrawBlock(TetrisBlocks block, Vector2Int startTilePos) {
+	std::vector<Vector2Int> currentBlockOffsets = Cells[block];
+	for (int i = 0; i < currentBlockOffsets.size(); i++) {
+		Vector2Int offset = currentBlockOffsets[i];
+		Vector2Int tileSpaceTile = startTilePos + offset;
+		DrawTile(sprites[block], tileSpaceTile);
 	}
-
-	std::map<TetrisBlocks, Sprite> getSprites() {
-		return sprites;
-	}
-
-	void DrawTile(Sprite sprite, Vector2Int tile) {
-		sprite.Draw(gridPosition.x + TILE_SIZE * tile.x, gridPosition.y + TILE_SIZE * tile.y, TILE_SIZE, TILE_SIZE);
-	}
-
-
-	void DrawBlock(TetrisBlocks block, Vector2Int startTilePos) {
-		std::vector<Vector2Int> currentBlockOffsets = Cells[block];
-		for (int i = 0; i < currentBlockOffsets.size(); i++) {
-			Vector2Int offset = currentBlockOffsets[i];
-			Vector2Int tileSpaceTile = startTilePos + offset;
-			DrawTile(sprites[block], tileSpaceTile);
-		}
-	}
+}
 
 	
 

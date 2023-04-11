@@ -9,12 +9,13 @@
 #include "audio.h"
 #include "text.h"
 #include "tilemap.h"
+#include "ui.h"
 
 SDL_Window* window;
 SDL_Renderer* renderer;
 
-int screenWidth = 600;
-int screenHeight = 400;
+int screenWidth = TILE_SIZE * GRID_WIDTH * 2;
+int screenHeight = TILE_SIZE * GRID_HEIGHT;
 
 bool ShouldCloseWindow() {
     SDL_Event event;
@@ -65,13 +66,23 @@ int main(int argc, char* argv[]) {
     InitTilemap();
 
     while (!ShouldCloseWindow()) {
+        // input
         PollInputs();
+
+        { // game logic
+            Tiletime();
+            UpdateGrid();
+        }
 
         SDL_SetRenderDrawColor(renderer, 240, 240, 179, 255);
         SDL_RenderClear(renderer);
         { // rendering
-            Tiletime();
-            UpdateGrid();
+            DrawBlockBackground();
+            DrawHoldBox();
+            DrawPrisonerBoxes();
+            DrawInfoBox();
+            DrawBabyBox();
+            DrawNextBlockBox();
             DrawTileMap();
         }
         SDL_RenderPresent(renderer);

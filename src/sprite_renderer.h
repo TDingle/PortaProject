@@ -9,12 +9,11 @@ struct Sprite {
 	SDL_Texture* texture;
 	SDL_Rect sprite;
 	SDL_Rect pos;
+
 	Sprite(){}
 	Sprite(const char* filename, int x, int y, int w, int h);
 		
-	
 	void Draw(int x, int y, int w, int h);
-		
 };
 
 enum TetrisBlocks
@@ -28,11 +27,7 @@ enum TetrisBlocks
 	L,
 	S,
 	Z
-	
 };
-
-
-
 
 
 struct Vector2Int {
@@ -53,11 +48,15 @@ struct Vector2Int {
 		return other.x == this->x && other.y == this->y;
 	}
 };
+
 void DrawTile(Sprite sprite, Vector2Int tile);
 
 void DrawBlock(TetrisBlocks block, Vector2Int startTilePos);
 
 extern std::map<TetrisBlocks, std::vector<Vector2Int>> Cells;
-std::map<TetrisBlocks, Sprite> getSprites();
+
+std::map<TetrisBlocks, Sprite>& getSprites();
+
 void SetGridPosition(Vector2Int pos);
+
 void initRenderer();

@@ -8,8 +8,8 @@
 struct TileProperties {
 	bool wall;
 	Sprite sprite;
-
 };
+
 void InitTilemap();
 
 void DrawTileMap();

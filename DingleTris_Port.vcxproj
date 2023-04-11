@@ -159,6 +159,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\text.cpp" />
     <ClCompile Include="src\tilemap.cpp" />
+    <ClCompile Include="src\ui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\SDL_FontCache.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="src\particle_system.h" />
     <ClInclude Include="src\text.h" />
     <ClInclude Include="src\tilemap.h" />
+    <ClInclude Include="src\ui.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
