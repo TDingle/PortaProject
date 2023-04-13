@@ -13,6 +13,9 @@ static Text uiText;
 
 static Spritesheet prisonerL;
 
+// NOTE: all of these UI drawing parts are hardcoded lol...
+// if we resize the screen everything will kinda jus break
+
 void DrawBGSquareOnTileGrid(int left, int right, int top, int bottom) {
     Sprite& bgSprite = getSprites()[TetrisBlocks::BG];
     for (int x = left; x < right; x++) {
@@ -73,6 +76,11 @@ void DrawInfoBox() {
 }
 void DrawBabyBox() {
     DrawBGSquareOnTileGrid(screenWidth/TILE_SIZE - 6, screenWidth / TILE_SIZE - 1, 1, 5);
+    static Spritesheet bigBaby;
+    if (!bigBaby.sprites) {
+        bigBaby = Spritesheet("Assets/BigBaby.png", 32, 32, 2, 45);
+    }
+    bigBaby.DrawAndTick(TILE_SIZE * 18, TILE_SIZE, TILE_SIZE * 5, TILE_SIZE * 4);
 }
 void DrawNextBlockBox() {
     DrawBGSquareOnTileGrid(screenWidth / TILE_SIZE - 6, screenWidth / TILE_SIZE - 1, 6, 16);
