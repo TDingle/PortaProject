@@ -12,6 +12,8 @@ Block holdBlock;
 Block nextBlock;
 std::vector<Block> inactiveBlocks;
 
+Vector2Int blockSpawnPos = Vector2Int(GRID_WIDTH / 2, 1);
+
 char tilemap[GRID_HEIGHT][GRID_WIDTH] =
 {
 	{1,1,1,1,1,1,1,1,1,1,1,1},
@@ -82,12 +84,15 @@ Block CreatRandomBlockAtStartPos() {
 	int randBlockType = RandomRangeInclusive(2, 8);
 	b.type = (TetrisBlocks)randBlockType;
 	b.direction = 0;
-	b.pos = Vector2Int(GRID_WIDTH / 2, 1);
+	b.pos = blockSpawnPos;
 	return b;
 }
 long long previousTime = 0;
 void InitTilemap() {
+	ClearGridExceptWalls();
 	activeBlock = CreatRandomBlockAtStartPos();
+	holdBlock = Block();
+	// TODO: init next block as well
 	inactiveBlocks.clear();
 	previousTime = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
@@ -120,6 +125,12 @@ bool isMoveValid(Vector2Int movementOffset) {
 void LockActiveBlock() {
 	inactiveBlocks.push_back(activeBlock);
 	activeBlock = CreatRandomBlockAtStartPos();
+	bool isStartingPosBlocked = tilemap[blockSpawnPos.y][blockSpawnPos.x] != TetrisBlocks::BG;
+	if (isStartingPosBlocked) {
+		// we lose!
+		printf("YOU LOSE\n");
+		InitTilemap();
+	}
 }
 
 void TryMoveActiveBlock(InputAction direction) {

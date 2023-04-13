@@ -44,6 +44,9 @@ void DrawPrisonerBoxes() {
     static Sprite prisonerLBG;
     static Spritesheet prisonerLSpritesheet;
     if (!prisonerLBG.texture) {
+        // this is called "Lazy initialization"
+        // because we only actually initialize our resource (spritesheet) when it is first needed
+        // as opposed to initializing it when we first boot the program
         prisonerLBG = Sprite("Assets/prisonerL_BG.png");
         prisonerLSpritesheet = Spritesheet("Assets/PlayerSprites/prisonerL.png", 32, 32, 5, 30);
     }

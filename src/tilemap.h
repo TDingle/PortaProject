@@ -7,8 +7,8 @@
 
 struct Block {
 	Block() {}
-	Vector2Int pos;
-	int direction;
+	Vector2Int pos = Vector2Int(0,0);
+	int direction = 0;
 	TetrisBlocks type;
 };
 
@@ -24,3 +24,5 @@ void DrawTileMap();
 void UpdateGrid();
 
 void Tiletime();
+
+void ClearGridExceptWalls();
