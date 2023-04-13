@@ -11,16 +11,11 @@ struct Sprite {
 	SDL_Rect pos;
 
 	Sprite(){}
-	Sprite(const char* filename, int x, int y, int w, int h);
+	Sprite(const char* filename, int x = 0, int y = 0, int w = 0, int h = 0);
 		
 	void Draw(int x, int y, int w, int h);
 };
 
-struct Spritesheet {
-	Spritesheet(const char* filename, int spriteWidth, int spriteHeight);
-	void Draw(int x, int y, int w, int h);
-	std::vector<Sprite> sprites = {};
-};
 
 enum TetrisBlocks
 {
@@ -66,6 +61,21 @@ struct Vector2Int {
 		res.y = this->y * scalar;
 		return res;
 	}
+};
+
+struct Spritesheet {
+	Spritesheet() {}
+	Spritesheet(const char* filename, int spriteWidth, int spriteHeight, int numKeyframes, int tickInterval = 1);
+	void Draw(int x, int y, int w, int h, int frame);
+	void DrawAndTick(int x, int y, int w, int h);
+	SDL_Texture* sprites = nullptr;
+	Vector2Int textureSize = Vector2Int(0,0);
+	int spriteWidth = 0;
+	int spriteHeight = 0;
+	int frame = 0;
+	int currentAnimFrame = 0;
+	int tickInterval = 1;
+	int numKeyframes = 0;
 };
 
 void DrawTile(Sprite sprite, Vector2Int tile);

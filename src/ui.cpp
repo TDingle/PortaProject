@@ -11,6 +11,8 @@ extern Block nextBlock;
 
 static Text uiText;
 
+static Spritesheet prisonerL;
+
 void DrawBGSquareOnTileGrid(int left, int right, int top, int bottom) {
     Sprite& bgSprite = getSprites()[TetrisBlocks::BG];
     for (int x = left; x < right; x++) {
@@ -36,9 +38,25 @@ void DrawHoldBox() {
 void DrawPrisonerBoxes() {
     // LEFT PRISONER
     DrawBGSquareOnTileGrid(1, 6, 6, 10);
+    static Sprite prisonerLBG;
+    static Spritesheet prisonerLSpritesheet;
+    if (!prisonerLBG.texture) {
+        prisonerLBG = Sprite("Assets/prisonerL_BG.png");
+        prisonerLSpritesheet = Spritesheet("Assets/PlayerSprites/prisonerL.png", 32, 32, 5, 30);
+    }
+    prisonerLBG.Draw(TILE_SIZE, TILE_SIZE*6, TILE_SIZE*5, TILE_SIZE*4);
+    prisonerLSpritesheet.DrawAndTick(TILE_SIZE * 3, TILE_SIZE * 8, 32, 32);
 
-    // RIGHT PRISONER
+    // RIGHT PRISONER ( bottom right of screen )
     DrawBGSquareOnTileGrid(screenWidth / TILE_SIZE - 6, screenWidth / TILE_SIZE - 1, 17, GRID_HEIGHT-1);
+    static Sprite prisonerRBG;
+    static Spritesheet prisonerRSpritesheet;
+    if (!prisonerRBG.texture) {
+        prisonerRBG = Sprite("Assets/prisonerR_BG.png");
+        prisonerRSpritesheet = Spritesheet("Assets/PlayerSprites/prisonerR.png", 32, 32, 3, 30);
+    }
+    prisonerRBG.Draw(TILE_SIZE * 18, TILE_SIZE * 17, TILE_SIZE * 5, TILE_SIZE * 4);
+    prisonerRSpritesheet.DrawAndTick(TILE_SIZE * 20, TILE_SIZE * 19, 32, 32);
 }
 void DrawInfoBox() {
     DrawBGSquareOnTileGrid(1, 6, 11, GRID_HEIGHT - 1);

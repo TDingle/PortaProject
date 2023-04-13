@@ -17,7 +17,6 @@ Sprite::Sprite(const char* filename, int x, int y, int w, int h) {
 	sprite.w = w;
 	sprite.h = h;
 
-		
 	texture = IMG_LoadTexture(renderer, filename);
 }
 void Sprite::Draw(int x, int y, int w, int h) {
@@ -26,16 +25,61 @@ void Sprite::Draw(int x, int y, int w, int h) {
 	pos.y = y;
 	pos.w = w;
 	pos.h = h;
+	SDL_Rect* clipSprite = NULL;
+	if (sprite.w != 0 && sprite.h != 0) {
+		clipSprite = &sprite;
+	}
 	//position on screen
-	SDL_RenderCopy(renderer, texture, &sprite, &pos);
-
+	SDL_RenderCopy(renderer, texture, clipSprite, &pos);
 }
 
-Spritesheet::Spritesheet(const char* filename, int spriteWidth, int spriteHeight) {
 
+Vector2Int GetTextureSize(SDL_Texture* texture) {
+	SDL_Point size;
+	SDL_QueryTexture(texture, NULL, NULL, &size.x, &size.y);
+	return Vector2Int(size.x, size.y);
 }
-void Spritesheet::Draw(int x, int y, int w, int h) {
 
+Spritesheet::Spritesheet(const char* filename, int spriteWidth, int spriteHeight, int numKeyframes, int tickInterval) {
+	this->spriteHeight = spriteHeight;
+	this->spriteWidth = spriteWidth;
+	this->tickInterval = tickInterval;
+	this->numKeyframes = numKeyframes;
+	this->sprites = IMG_LoadTexture(renderer, filename);
+	this->textureSize = GetTextureSize(this->sprites);
+}
+void Spritesheet::Draw(int x, int y, int w, int h, int frame) {
+	SDL_Rect pos = { x, y, w, h };
+	SDL_Rect sprite;
+	sprite.w = this->spriteWidth;
+	sprite.h = this->spriteHeight;
+	// epic spritesheet math time
+	// num of rows/cols (of sprite keyframes) in our spritesheet
+	int numCols = this->textureSize.x / this->spriteWidth;
+	int numRows = this->textureSize.y / this->spriteHeight;
+
+	// top-left corner of this frame's sprite
+	int xClip = (frame % numCols) * this->spriteWidth;
+	int yClip = ((frame / numCols) % numRows) * this->spriteHeight;
+
+	sprite.x = xClip;
+	sprite.y = yClip;
+
+	SDL_RenderCopy(renderer, this->sprites, &sprite, &pos);
+}
+void Spritesheet::DrawAndTick(int x, int y, int w, int h) {
+	bool shouldTickFrame = (this->frame+1) % this->tickInterval == 0;
+	if (shouldTickFrame) {
+		this->currentAnimFrame++;
+		int numCols = this->textureSize.x / this->spriteWidth;
+		int numRows = this->textureSize.y / this->spriteHeight;
+		bool isBlankKeyframe = this->currentAnimFrame % (numCols * numRows) >= this->numKeyframes;
+		if (isBlankKeyframe) {
+			this->currentAnimFrame = 0;
+		}
+	}
+	this->frame++;
+	this->Draw(x, y, w, h, this->currentAnimFrame);
 }
 	
 	
