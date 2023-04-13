@@ -71,14 +71,16 @@ void UpdateGrid() {
 	UpdateGridWithBlock(activeBlock);
 }
 
-int RandomRange(int min, int max) {
+int RandomRangeInclusive(int min, int max) {
 	srand(time(0));
-	int num = (rand() % max) + min;
+	int num = rand() % (max + 1 - min) + min;
+	SDL_assert(num >= min && num <= max);
 	return num;
 }
 Block CreatRandomBlockAtStartPos() {
 	Block b;
-	b.type = (TetrisBlocks)RandomRange(2, 8);
+	int randBlockType = RandomRangeInclusive(2, 8);
+	b.type = (TetrisBlocks)randBlockType;
 	b.direction = 0;
 	b.pos = Vector2Int(GRID_WIDTH / 2, 1);
 	return b;
