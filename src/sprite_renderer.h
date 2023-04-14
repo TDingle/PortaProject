@@ -21,6 +21,7 @@ enum TetrisBlocks
 {
 	BG,
 	Wall,
+	Ghost,
 	I,
 	O,
 	T,
@@ -80,7 +81,7 @@ struct Spritesheet {
 
 void DrawTile(Sprite sprite, Vector2Int tile);
 
-void DrawBlock(TetrisBlocks block, Vector2Int startTilePos);
+void DrawBlock(TetrisBlocks offsetBlock, TetrisBlocks spriteBlock, Vector2Int startTilePos);
 void DrawBlockAtWorldPos(TetrisBlocks block, Vector2Int worldPos);
 
 extern std::map<TetrisBlocks, std::vector<Vector2Int>> Cells;
@@ -90,3 +91,4 @@ std::map<TetrisBlocks, Sprite>& getSprites();
 void SetGridPosition(Vector2Int pos);
 
 void initRenderer();
+

@@ -93,6 +93,8 @@ std::map<TetrisBlocks, std::vector<Vector2Int>> Cells =
 	{ TetrisBlocks(S), {Vector2Int(0, 1), Vector2Int(1, 1), Vector2Int(-1, 0), Vector2Int(0, 0)}},
 	{ TetrisBlocks(T), {Vector2Int(0, 1), Vector2Int(-1, 0), Vector2Int(0, 0), Vector2Int(1, 0)}},
 	{ TetrisBlocks(Z), {Vector2Int(-1, 1), Vector2Int(0, 1), Vector2Int(0, 0), Vector2Int(1, 0)}},
+	
+	
 };
 
 void initRenderer() {
@@ -106,6 +108,7 @@ void initRenderer() {
 	{TetrisBlocks(Z), {Sprite("Assets/otherBlocks.png", 0, TILE_SIZE * 2, TILE_SIZE, TILE_SIZE)}},
 	{TetrisBlocks(Wall),{Sprite("Assets/wall.png", 0, 0, TILE_SIZE, TILE_SIZE)}},
 	{TetrisBlocks(BG),{Sprite("Assets/otherBlocks.png", TILE_SIZE, TILE_SIZE * 2, TILE_SIZE, TILE_SIZE)}},
+	{TetrisBlocks(Ghost),{Sprite("Assets/ghost.png", 0, 0, TILE_SIZE, TILE_SIZE)}}
 	};
 }
 
@@ -118,12 +121,12 @@ void DrawTile(Sprite sprite, Vector2Int tile) {
 }
 
 
-void DrawBlock(TetrisBlocks block, Vector2Int startTilePos) {
-	std::vector<Vector2Int> currentBlockOffsets = Cells[block];
+void DrawBlock(TetrisBlocks offsetBlock,TetrisBlocks spriteBlock, Vector2Int startTilePos) {
+	std::vector<Vector2Int> currentBlockOffsets = Cells[offsetBlock];
 	for (int i = 0; i < currentBlockOffsets.size(); i++) {
 		Vector2Int offset = currentBlockOffsets[i];
 		Vector2Int tileSpaceTile = startTilePos + offset;
-		DrawTile(sprites[block], tileSpaceTile);
+		DrawTile(sprites[spriteBlock], tileSpaceTile);
 	}
 }
 void DrawBlockAtWorldPos(TetrisBlocks block, Vector2Int worldPos) {

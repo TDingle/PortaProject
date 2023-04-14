@@ -38,6 +38,7 @@ void DrawHoldBox() {
     uiText.Draw("HOLD", 2 * TILE_SIZE, TILE_SIZE - 7);
     DrawBlockAtWorldPos(holdBlock.type, Vector2Int(TILE_SIZE * 3, 2 * TILE_SIZE + 10));
 }
+
 void DrawPrisonerBoxes() {
     // LEFT PRISONER
     DrawBGSquareOnTileGrid(1, 6, 6, 10);
