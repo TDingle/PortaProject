@@ -18,6 +18,7 @@ enum InputAction {
     ROTLEFT,
     ROTRIGHT,
     HOLD,
+    DROP,
 
     NUM_INPUT_ACTIONS,
 };

@@ -9,6 +9,7 @@ int keyboardInputMap[] = {
     SDL_SCANCODE_Z, // rotate left
     SDL_SCANCODE_X, // rotate right
     SDL_SCANCODE_C, // hold block
+    SDL_SCANCODE_SPACE, // drop block
 };
 
 //using SDL_GameControllerButton::*;
@@ -19,6 +20,7 @@ SDL_GameControllerButton gamepadInputMap[] = {
     SDL_CONTROLLER_BUTTON_LEFTSHOULDER, // rotate left
     SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, // rotate right
     SDL_CONTROLLER_BUTTON_A, // hold block
+    SDL_CONTROLLER_BUTTON_B, // drop block
 };
 
 // only one keyboard, so keeping track of keys pressed in a static
