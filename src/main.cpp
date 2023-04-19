@@ -70,15 +70,18 @@ int main(int argc, char* argv[]) {
         PollInputs();
 
         { // game logic
-            Tiletime();
-            UpdateGrid();
+            if (IsGameStarted()) {
+                Tiletime();
+                UpdateGrid();
+            }
         }
 
         SDL_SetRenderDrawColor(renderer, 240, 240, 179, 255);
         SDL_RenderClear(renderer);
         { // rendering
-            DrawUI();
+            DrawUIBackground();
             DrawTileMap();
+            DrawUIForeground();
         }
         SDL_RenderPresent(renderer);
     }
