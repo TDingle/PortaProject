@@ -4,4 +4,7 @@
 #include "tilemap.h"
 #include "text.h"
 
-void DrawUI();
+void DrawUIBackground();
+void DrawUIForeground();
+bool IsGameStarted();
+void SetGameStarted(bool isStart);

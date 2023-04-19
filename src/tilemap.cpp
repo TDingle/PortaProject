@@ -5,6 +5,7 @@
 #include <random>
 #include <chrono>
 #include "input.h"
+#include "ui.h"
 
 
 Block activeBlock;
@@ -89,6 +90,7 @@ Block CreatRandomBlockAtStartPos() {
 }
 long long previousTime = 0;
 void InitTilemap() {
+	SetGameStarted(false);
 	ClearGridExceptWalls();
 	activeBlock = CreatRandomBlockAtStartPos();
 	holdBlock = Block();

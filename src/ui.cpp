@@ -4,7 +4,7 @@
 
 extern int screenWidth;
 extern int screenHeight;
-
+extern SDL_Renderer* renderer;
 
 extern Block holdBlock;
 extern Block nextBlock;
@@ -13,8 +13,32 @@ static Text uiText;
 
 static Spritesheet prisonerL;
 
+bool gameStarted = false;
+bool IsGameStarted() { return gameStarted; }
+void SetGameStarted(bool isStart) { gameStarted = isStart; }
+
 // NOTE: all of these UI drawing parts are hardcoded lol...
 // if we resize the screen everything will kinda jus break
+
+void DrawPlayButton() {
+    if (!IsGameStarted()) {
+        // draw button when game is not started
+        SDL_Rect playButtonRect = { screenWidth / 2.0f - 35, screenHeight / 1.5f, 75, 35 };
+        SDL_SetRenderDrawColor(renderer, 232, 80, 111, 255);
+        SDL_RenderFillRect(renderer, &playButtonRect);
+        uiText.Draw("PLAY", playButtonRect.x, playButtonRect.y);
+
+        // and check if we've clicked it. If so, start the game
+        SDL_Point mousePos;
+        uint32_t mouseState = SDL_GetMouseState(&mousePos.x, &mousePos.y);
+        bool isClick = SDL_BUTTON(1) & mouseState;
+        bool isOnButton = SDL_PointInRect(&mousePos, &playButtonRect);
+        bool isClickedPlayButton = isClick && isOnButton;
+        if (isClickedPlayButton) {
+            SetGameStarted(true);
+        }
+    }
+}
 
 void DrawBGSquareOnTileGrid(int left, int right, int top, int bottom) {
     Sprite& bgSprite = getSprites()[TetrisBlocks::BG];
@@ -92,7 +116,7 @@ void DrawNextBlockBox() {
 }
 
 
-void DrawUI() {
+void DrawUIBackground() {
     if (!uiText.isValid()) {
         uiText = Text("KenneyMini.ttf", 25, 129, 29, 95);
     }
@@ -102,4 +126,7 @@ void DrawUI() {
     DrawInfoBox();
     DrawBabyBox();
     DrawNextBlockBox();
+}
+void DrawUIForeground() {
+    DrawPlayButton();
 }
