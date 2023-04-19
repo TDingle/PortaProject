@@ -11,6 +11,10 @@
 Block activeBlock;
 Block holdBlock;
 Block nextBlock;
+Block ghostBlock;
+
+bool canSwap;
+bool noHoldBlock;
 std::vector<Block> inactiveBlocks;
 
 Vector2Int blockSpawnPos = Vector2Int(GRID_WIDTH / 2, 1);
@@ -49,6 +53,7 @@ void DrawTileMap() {
 			DrawTile(blockSprite, Vector2Int(col, row));
 		}
 	}
+	DrawBlock(activeBlock.type, ghostBlock.type, ghostBlock.pos);
 }
 
 void ClearGridExceptWalls() {
@@ -66,44 +71,9 @@ void UpdateGridWithBlock(Block block) {
 		tilemap[fillSquare.y][fillSquare.x] = block.type;
 	}
 }
-void UpdateGrid() {
-	ClearGridExceptWalls();
-	for (Block b : inactiveBlocks) {
-		UpdateGridWithBlock(b);
-	}
-	UpdateGridWithBlock(activeBlock);
-}
-
-int RandomRangeInclusive(int min, int max) {
-	srand(time(0));
-	int num = rand() % (max + 1 - min) + min;
-	SDL_assert(num >= min && num <= max);
-	return num;
-}
-Block CreatRandomBlockAtStartPos() {
-	Block b;
-	int randBlockType = RandomRangeInclusive(2, 8);
-	b.type = (TetrisBlocks)randBlockType;
-	b.direction = 0;
-	b.pos = blockSpawnPos;
-	return b;
-}
-long long previousTime = 0;
-void InitTilemap() {
-	SetGameStarted(false);
-	ClearGridExceptWalls();
-	activeBlock = CreatRandomBlockAtStartPos();
-	holdBlock = Block();
-	// TODO: init next block as well
-	inactiveBlocks.clear();
-	previousTime = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-}
-
-
-
-bool isMoveValid(Vector2Int movementOffset) {
-	std::vector<Vector2Int> offsets = Cells[activeBlock.type];
-	Vector2Int tileCenterPos = activeBlock.pos;
+bool isMoveValid(Block block, Vector2Int movementOffset) {
+	std::vector<Vector2Int> offsets = Cells[block.type];
+	Vector2Int tileCenterPos = block.pos;
 	for (Vector2Int offset : offsets) {
 		Vector2Int tileToCheck = tileCenterPos + offset;
 		tileToCheck = tileToCheck + movementOffset;
@@ -116,17 +86,72 @@ bool isMoveValid(Vector2Int movementOffset) {
 		if (isOwnBlock) continue;
 
 		char squareWeAreCollidingWith = tilemap[tileToCheck.y][tileToCheck.x];
-		bool isCollision = squareWeAreCollidingWith != 0;
+		bool isCollision = squareWeAreCollidingWith != TetrisBlocks::BG && squareWeAreCollidingWith != TetrisBlocks::Ghost;
 		if (isCollision) {
 			return false;
 		}
 	}
 	return true;
 }
+void GhostPiece() {
+	//uhhhhh
+	//ghost piece needs the ghost piece sprite from enum
+	//needs x activeblocks type and pos
+	// y pos needs to be max valid
+	ghostBlock = activeBlock;
+	while (isMoveValid(ghostBlock, Vector2Int(0, 1))) {
+		ghostBlock.pos.y += 1;
+	}
+	
+	ghostBlock.type = TetrisBlocks::Ghost;
+
+
+
+}
+void UpdateGrid() {
+	ClearGridExceptWalls();
+	for (Block b : inactiveBlocks) {
+		UpdateGridWithBlock(b);
+	}
+	UpdateGridWithBlock(activeBlock);
+	GhostPiece();
+	
+}
+
+int RandomRangeInclusive(int min, int max) {
+	srand(time(0));
+	int num = rand() % (max + 1 - min) + min;
+	SDL_assert(num >= min && num <= max);
+	return num;
+}
+Block CreatRandomBlockAtStartPos() {
+	Block b;
+	int randBlockType = RandomRangeInclusive(3, 8);
+	b.type = (TetrisBlocks)randBlockType;
+	b.direction = 0;
+	b.pos = blockSpawnPos;
+	return b;
+}
+long long previousTime = 0;
+void InitTilemap() {
+	SetGameStarted(false);
+	ClearGridExceptWalls();
+	activeBlock = CreatRandomBlockAtStartPos();
+	nextBlock = CreatRandomBlockAtStartPos();
+	noHoldBlock = true;
+	
+	inactiveBlocks.clear();
+	previousTime = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+}
+
+
+
 
 void LockActiveBlock() {
 	inactiveBlocks.push_back(activeBlock);
-	activeBlock = CreatRandomBlockAtStartPos();
+	activeBlock = nextBlock;
+	nextBlock = CreatRandomBlockAtStartPos();
+	canSwap = true;
 	bool isStartingPosBlocked = tilemap[blockSpawnPos.y][blockSpawnPos.x] != TetrisBlocks::BG;
 	if (isStartingPosBlocked) {
 		// we lose!
@@ -138,7 +163,7 @@ void LockActiveBlock() {
 void TryMoveActiveBlock(InputAction direction) {
 	if (direction == InputAction::DOWN) {
 		// if we're trying to move down and can't - we lock the block and spawn a new one
-		if (!isMoveValid(Vector2Int(0, 1))) {
+		if (!isMoveValid(activeBlock, Vector2Int(0, 1))) {
 			LockActiveBlock();
 		}
 		else {
@@ -147,17 +172,45 @@ void TryMoveActiveBlock(InputAction direction) {
 	}
 	// for moving left/right, if we try to but can't, don't spawn a new one. Just do nothing
 	else if (direction == InputAction::LEFT) {
-		if (isMoveValid(Vector2Int(-1, 0))) {
+		if (isMoveValid(activeBlock, Vector2Int(-1, 0))) {
 			activeBlock.pos.x -= 1;
 		}
 	}
 	else if (direction == InputAction::RIGHT) {
-		if (isMoveValid(Vector2Int(1, 0))) {
+		if (isMoveValid(activeBlock, Vector2Int(1, 0))) {
 			activeBlock.pos.x += 1;
 		}
 	}
 }
+void SwapBlock(InputAction key) {
+	if (key == InputAction::HOLD) {
+		if (canSwap) {//canswap needs to check if the player has already swapped before the active piece has been placed
 
+			if (noHoldBlock == false) {//need some way of checking if the hold block is there
+				Block holdBlockcopy = holdBlock;
+				holdBlock = activeBlock;
+
+				holdBlock.pos = blockSpawnPos;
+				holdBlockcopy.pos = blockSpawnPos;
+
+				activeBlock = holdBlockcopy;
+
+				
+				
+			}
+			else {
+				holdBlock = activeBlock;
+				holdBlock.pos = blockSpawnPos;
+
+				activeBlock = nextBlock;
+				
+				noHoldBlock = false;
+				
+			}
+			canSwap = false;
+		}
+	}
+}
 
 void Tiletime() {
 	long long seconds = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
@@ -176,6 +229,14 @@ void Tiletime() {
 	}
 	else if (isActionPressed(InputAction::DOWN)) {
 		TryMoveActiveBlock(InputAction::DOWN);
+	}
+
+
+	if (isActionPressed(InputAction::HOLD)) {
+		SwapBlock(InputAction::HOLD);
+	}
+	if (isActionPressed(InputAction::DROP)) {
+		activeBlock.pos = ghostBlock.pos;
 	}
 }
 
