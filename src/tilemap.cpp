@@ -17,6 +17,9 @@ bool canSwap;
 bool noHoldBlock;
 std::vector<Block> inactiveBlocks;
 
+extern int score;
+extern int level;
+
 Vector2Int blockSpawnPos = Vector2Int(GRID_WIDTH / 2, 1);
 
 char tilemap[GRID_HEIGHT][GRID_WIDTH] =
@@ -45,6 +48,38 @@ char tilemap[GRID_HEIGHT][GRID_WIDTH] =
 	{1,1,1,1,1,1,1,1,1,1,1,1},
 
 };
+
+void MoveBlock(Block& block, Vector2Int moveVec) {
+	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type);
+	// clear previous position
+	for (Vector2Int offset : offsets) {
+		Vector2Int tile = block.pos + offset;
+		tilemap[tile.y][tile.x] = TetrisBlocks::BG;
+	}
+	// make the actual move
+	block.pos = block.pos + moveVec;
+	// refill tilemap grid
+	for (Vector2Int offset : offsets) {
+		Vector2Int tile = block.pos + offset;
+		tilemap[tile.y][tile.x] = block.type;
+	}
+}
+void SetBlockPos(Block& block, Vector2Int pos) {
+	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type);
+	// clear previous position
+	for (Vector2Int offset : offsets) {
+		Vector2Int tile = block.pos + offset;
+		tilemap[tile.y][tile.x] = TetrisBlocks::BG;
+	}
+	// make the actual move
+	block.pos = pos;
+	// refill tilemap grid
+	for (Vector2Int offset : offsets) {
+		Vector2Int tile = block.pos + offset;
+		tilemap[tile.y][tile.x] = block.type;
+	}
+}
+
 void DrawTileMap() {
 	for (int row = 0; row < GRID_HEIGHT; row++) {
 		for (int col = 0; col < GRID_WIDTH; col++) {
@@ -59,20 +94,19 @@ void DrawTileMap() {
 void ClearGridExceptWalls() {
 	for (int row = 1; row < GRID_HEIGHT - 1; row++) {
 		for (int col = 1; col < GRID_WIDTH - 1; col++) {
-			tilemap[row][col] = 0;
+			tilemap[row][col] = TetrisBlocks::BG;
 		}
 	}
 }
 void UpdateGridWithBlock(Block block) {
-	std::vector<Vector2Int> offsets = Cells[block.type];
-	Vector2Int pieceCenter = block.pos;
+	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type);
 	for (Vector2Int offset : offsets) {
-		Vector2Int fillSquare = pieceCenter + offset;
+		Vector2Int fillSquare = block.pos + offset;
 		tilemap[fillSquare.y][fillSquare.x] = block.type;
 	}
 }
 bool isMoveValid(Block block, Vector2Int movementOffset) {
-	std::vector<Vector2Int> offsets = Cells[block.type];
+	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type);
 	Vector2Int tileCenterPos = block.pos;
 	for (Vector2Int offset : offsets) {
 		Vector2Int tileToCheck = tileCenterPos + offset;
@@ -86,7 +120,7 @@ bool isMoveValid(Block block, Vector2Int movementOffset) {
 		if (isOwnBlock) continue;
 
 		char squareWeAreCollidingWith = tilemap[tileToCheck.y][tileToCheck.x];
-		bool isCollision = squareWeAreCollidingWith != TetrisBlocks::BG && squareWeAreCollidingWith != TetrisBlocks::Ghost;
+		bool isCollision = !isBlankBlock((TetrisBlocks)squareWeAreCollidingWith);
 		if (isCollision) {
 			return false;
 		}
@@ -94,7 +128,6 @@ bool isMoveValid(Block block, Vector2Int movementOffset) {
 	return true;
 }
 void GhostPiece() {
-	//uhhhhh
 	//ghost piece needs the ghost piece sprite from enum
 	//needs x activeblocks type and pos
 	// y pos needs to be max valid
@@ -102,20 +135,53 @@ void GhostPiece() {
 	while (isMoveValid(ghostBlock, Vector2Int(0, 1))) {
 		ghostBlock.pos.y += 1;
 	}
-	
 	ghostBlock.type = TetrisBlocks::Ghost;
-
-
-
 }
-void UpdateGrid() {
-	ClearGridExceptWalls();
-	for (Block b : inactiveBlocks) {
-		UpdateGridWithBlock(b);
+
+void MoveLineDownOneRow(int row) {
+	// copy specified row into row below
+	for (int col = 1; col < GRID_WIDTH - 1; col++) {
+		tilemap[row+1][col] = tilemap[row][col];
+		tilemap[row][col] = TetrisBlocks::BG;
 	}
-	UpdateGridWithBlock(activeBlock);
+}
+void ClearLine(int row) {
+	// actually clear the line
+	for (int col = 1; col < GRID_WIDTH - 1; col++) {
+		tilemap[row][col] = TetrisBlocks::BG;
+	}
+
+	// move all blocks above this row down one
+	for (int aboveRow = row-1; aboveRow > 2; aboveRow--) {
+		MoveLineDownOneRow(aboveRow);
+	}
+}
+void IncrementScore() {
+	score++;
+	if (score > 10) {
+		level++;
+	}
+}
+
+void LineClears() {
+	for (int row = GRID_HEIGHT-2; row > 1; row--) {
+		bool isRowFilled = true;
+		for (int col = 1; col < GRID_WIDTH - 1; col++) {
+			if (isBlankBlock((TetrisBlocks)tilemap[row][col])) {
+				isRowFilled = false;
+				break;
+			}
+		}
+		if (isRowFilled) {
+			ClearLine(row);
+			IncrementScore();
+		}
+	}
+}
+
+void UpdateGrid() {
+	LineClears();
 	GhostPiece();
-	
 }
 
 int RandomRangeInclusive(int min, int max) {
@@ -137,8 +203,11 @@ void InitTilemap() {
 	SetGameStarted(false);
 	ClearGridExceptWalls();
 	activeBlock = CreatRandomBlockAtStartPos();
+	UpdateGridWithBlock(activeBlock);
 	nextBlock = CreatRandomBlockAtStartPos();
 	noHoldBlock = true;
+	score = 0;
+	level = 1;
 	
 	inactiveBlocks.clear();
 	previousTime = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
@@ -152,12 +221,13 @@ void LockActiveBlock() {
 	activeBlock = nextBlock;
 	nextBlock = CreatRandomBlockAtStartPos();
 	canSwap = true;
-	bool isStartingPosBlocked = tilemap[blockSpawnPos.y][blockSpawnPos.x] != TetrisBlocks::BG;
+	bool isStartingPosBlocked = !isBlankBlock((TetrisBlocks)tilemap[blockSpawnPos.y][blockSpawnPos.x]);
 	if (isStartingPosBlocked) {
 		// we lose!
 		printf("YOU LOSE\n");
 		InitTilemap();
 	}
+	UpdateGridWithBlock(activeBlock);
 }
 
 void TryMoveActiveBlock(InputAction direction) {
@@ -167,18 +237,21 @@ void TryMoveActiveBlock(InputAction direction) {
 			LockActiveBlock();
 		}
 		else {
-			activeBlock.pos.y += 1;
+			MoveBlock(activeBlock, Vector2Int(0, 1));
+			//activeBlock.pos.y += 1;
 		}
 	}
 	// for moving left/right, if we try to but can't, don't spawn a new one. Just do nothing
 	else if (direction == InputAction::LEFT) {
 		if (isMoveValid(activeBlock, Vector2Int(-1, 0))) {
-			activeBlock.pos.x -= 1;
+			MoveBlock(activeBlock, Vector2Int(-1, 0));
+			//activeBlock.pos.x -= 1;
 		}
 	}
 	else if (direction == InputAction::RIGHT) {
 		if (isMoveValid(activeBlock, Vector2Int(1, 0))) {
-			activeBlock.pos.x += 1;
+			MoveBlock(activeBlock, Vector2Int(1, 0));
+			//activeBlock.pos.x += 1;
 		}
 	}
 }
@@ -230,13 +303,12 @@ void Tiletime() {
 	else if (isActionPressed(InputAction::DOWN)) {
 		TryMoveActiveBlock(InputAction::DOWN);
 	}
-
-
-	if (isActionPressed(InputAction::HOLD)) {
+	else if (isActionPressed(InputAction::HOLD)) {
 		SwapBlock(InputAction::HOLD);
 	}
-	if (isActionPressed(InputAction::DROP)) {
-		activeBlock.pos = ghostBlock.pos;
+	else if (isActionPressed(InputAction::DROP)) {
+		//activeBlock.pos = ghostBlock.pos;
+		SetBlockPos(activeBlock, ghostBlock.pos);
 	}
 }
 

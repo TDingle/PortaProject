@@ -17,7 +17,7 @@ struct Sprite {
 };
 
 
-enum TetrisBlocks
+enum TetrisBlocks : char
 {
 	BG,
 	Wall,
@@ -32,7 +32,9 @@ enum TetrisBlocks
 
 	NUM_BLOCKS
 };
-
+inline bool isBlankBlock(TetrisBlocks block) {
+	return block == BG || block == Ghost;
+}
 
 struct Vector2Int {
 	Vector2Int(){}
@@ -62,6 +64,12 @@ struct Vector2Int {
 		res.y = this->y * scalar;
 		return res;
 	}
+	Vector2Int operator-(Vector2Int other) {
+		Vector2Int res;
+		res.x = this->x - other.x;
+		res.y = this->y - other.y;
+		return res;
+	}
 };
 
 struct Spritesheet {
@@ -78,6 +86,8 @@ struct Spritesheet {
 	int tickInterval = 1;
 	int numKeyframes = 0;
 };
+
+std::vector<Vector2Int> GetBlockOffsets(TetrisBlocks type, int rotationIndex = 0);
 
 void DrawTile(Sprite sprite, Vector2Int tile);
 

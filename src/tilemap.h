@@ -17,6 +17,9 @@ struct TileProperties {
 	Sprite sprite;
 };
 
+void MoveBlock(Block& block, Vector2Int moveVec);
+void SetBlockPos(Block& block, Vector2Int pos);
+
 void InitTilemap();
 
 void DrawTileMap();

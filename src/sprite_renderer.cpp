@@ -84,6 +84,9 @@ void Spritesheet::DrawAndTick(int x, int y, int w, int h) {
 	
 	
 std::map<TetrisBlocks, Sprite> sprites = {};
+float cos_90 = cos(M_PI / 2.0f);
+float sin_90 = sin(M_PI / 2.0f);
+float RotationMatrix[] = {cos_90, sin_90, -sin_90, cos_90};
 std::map<TetrisBlocks, std::vector<Vector2Int>> Cells =
 {
 	{ TetrisBlocks(I), {Vector2Int(-1, 1), Vector2Int(0, 1), Vector2Int(1, 1), Vector2Int(2, 1)}},
@@ -93,9 +96,12 @@ std::map<TetrisBlocks, std::vector<Vector2Int>> Cells =
 	{ TetrisBlocks(S), {Vector2Int(0, 1), Vector2Int(1, 1), Vector2Int(-1, 0), Vector2Int(0, 0)}},
 	{ TetrisBlocks(T), {Vector2Int(0, 1), Vector2Int(-1, 0), Vector2Int(0, 0), Vector2Int(1, 0)}},
 	{ TetrisBlocks(Z), {Vector2Int(-1, 1), Vector2Int(0, 1), Vector2Int(0, 0), Vector2Int(1, 0)}},
-	
-	
 };
+
+std::vector<Vector2Int> GetBlockOffsets(TetrisBlocks type, int rotationIndex) {
+	// TODO: rotations done here
+	return Cells[type];
+}
 
 void initRenderer() {
 	sprites = {
@@ -122,7 +128,7 @@ void DrawTile(Sprite sprite, Vector2Int tile) {
 
 
 void DrawBlock(TetrisBlocks offsetBlock,TetrisBlocks spriteBlock, Vector2Int startTilePos) {
-	std::vector<Vector2Int> currentBlockOffsets = Cells[offsetBlock];
+	std::vector<Vector2Int> currentBlockOffsets = GetBlockOffsets(offsetBlock);
 	for (int i = 0; i < currentBlockOffsets.size(); i++) {
 		Vector2Int offset = currentBlockOffsets[i];
 		Vector2Int tileSpaceTile = startTilePos + offset;
@@ -130,7 +136,7 @@ void DrawBlock(TetrisBlocks offsetBlock,TetrisBlocks spriteBlock, Vector2Int sta
 	}
 }
 void DrawBlockAtWorldPos(TetrisBlocks block, Vector2Int worldPos) {
-	std::vector<Vector2Int> currentBlockOffsets = Cells[block];
+	std::vector<Vector2Int> currentBlockOffsets = GetBlockOffsets(block);
 	for (int i = 0; i < currentBlockOffsets.size(); i++) {
 		Vector2Int offset = currentBlockOffsets[i];
 		Vector2Int tilePos = worldPos + (offset*TILE_SIZE);

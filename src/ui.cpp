@@ -1,6 +1,9 @@
 #include "ui.h"
 #include <ctime>
+#include <string>
 
+int score;
+int level;
 
 extern int screenWidth;
 extern int screenHeight;
@@ -95,12 +98,12 @@ void DrawInfoBox() {
     // Score
     uiText.Draw("SCORE:", TILE_SIZE + 5, 11 * TILE_SIZE);
     // TODO: put actual score here
-    uiText.Draw("0", TILE_SIZE * 3, 13 * TILE_SIZE);
+    uiText.Draw(std::to_string(score).c_str(), TILE_SIZE * 3, 13 * TILE_SIZE);
 
     // Level
     uiText.Draw("LEVEL:", TILE_SIZE + 5, 16 * TILE_SIZE);
     // TODO: put actual level here
-    uiText.Draw("0", TILE_SIZE * 3, 18 * TILE_SIZE);
+    uiText.Draw(std::to_string(level).c_str(), TILE_SIZE * 3, 18 * TILE_SIZE);
 }
 void DrawBabyBox() {
     DrawBGSquareOnTileGrid(screenWidth/TILE_SIZE - 6, screenWidth / TILE_SIZE - 1, 1, 5);
