@@ -6,6 +6,7 @@
 #include <chrono>
 #include "input.h"
 #include "ui.h"
+#include "highscore.h"
 
 
 Block activeBlock;
@@ -50,7 +51,7 @@ char tilemap[GRID_HEIGHT][GRID_WIDTH] =
 };
 
 void MoveBlock(Block& block, Vector2Int moveVec) {
-	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type);
+	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type, block.direction);
 	// clear previous position
 	for (Vector2Int offset : offsets) {
 		Vector2Int tile = block.pos + offset;
@@ -65,7 +66,7 @@ void MoveBlock(Block& block, Vector2Int moveVec) {
 	}
 }
 void SetBlockPos(Block& block, Vector2Int pos) {
-	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type);
+	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type, block.direction);
 	// clear previous position
 	for (Vector2Int offset : offsets) {
 		Vector2Int tile = block.pos + offset;
@@ -99,14 +100,14 @@ void ClearGridExceptWalls() {
 	}
 }
 void UpdateGridWithBlock(Block block) {
-	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type);
+	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type, block.direction);
 	for (Vector2Int offset : offsets) {
 		Vector2Int fillSquare = block.pos + offset;
 		tilemap[fillSquare.y][fillSquare.x] = block.type;
 	}
 }
 bool isMoveValid(Block block, Vector2Int movementOffset) {
-	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type);
+	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type, block.direction);
 	Vector2Int tileCenterPos = block.pos;
 	for (Vector2Int offset : offsets) {
 		Vector2Int tileToCheck = tileCenterPos + offset;
@@ -158,6 +159,7 @@ void ClearLine(int row) {
 }
 void IncrementScore() {
 	score++;
+	OnScoreChange(score);
 	if (score > 10) {
 		level++;
 	}
@@ -207,6 +209,7 @@ void InitTilemap() {
 	nextBlock = CreatRandomBlockAtStartPos();
 	noHoldBlock = true;
 	score = 0;
+	OnScoreChange(score);
 	level = 1;
 	
 	inactiveBlocks.clear();
@@ -238,20 +241,17 @@ void TryMoveActiveBlock(InputAction direction) {
 		}
 		else {
 			MoveBlock(activeBlock, Vector2Int(0, 1));
-			//activeBlock.pos.y += 1;
 		}
 	}
 	// for moving left/right, if we try to but can't, don't spawn a new one. Just do nothing
 	else if (direction == InputAction::LEFT) {
 		if (isMoveValid(activeBlock, Vector2Int(-1, 0))) {
 			MoveBlock(activeBlock, Vector2Int(-1, 0));
-			//activeBlock.pos.x -= 1;
 		}
 	}
 	else if (direction == InputAction::RIGHT) {
 		if (isMoveValid(activeBlock, Vector2Int(1, 0))) {
 			MoveBlock(activeBlock, Vector2Int(1, 0));
-			//activeBlock.pos.x += 1;
 		}
 	}
 }
@@ -307,7 +307,6 @@ void Tiletime() {
 		SwapBlock(InputAction::HOLD);
 	}
 	else if (isActionPressed(InputAction::DROP)) {
-		//activeBlock.pos = ghostBlock.pos;
 		SetBlockPos(activeBlock, ghostBlock.pos);
 	}
 }

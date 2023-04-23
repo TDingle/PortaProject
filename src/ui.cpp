@@ -1,6 +1,7 @@
 #include "ui.h"
 #include <ctime>
 #include <string>
+#include "highscore.h"
 
 int score;
 int level;
@@ -97,13 +98,15 @@ void DrawInfoBox() {
 
     // Score
     uiText.Draw("SCORE:", TILE_SIZE + 5, 11 * TILE_SIZE);
-    // TODO: put actual score here
-    uiText.Draw(std::to_string(score).c_str(), TILE_SIZE * 3, 13 * TILE_SIZE);
+    uiText.Draw(std::to_string(score).c_str(), TILE_SIZE * 3, 13 * TILE_SIZE - (TILE_SIZE/2.0));
 
     // Level
-    uiText.Draw("LEVEL:", TILE_SIZE + 5, 16 * TILE_SIZE);
-    // TODO: put actual level here
-    uiText.Draw(std::to_string(level).c_str(), TILE_SIZE * 3, 18 * TILE_SIZE);
+    uiText.Draw("LEVEL:", TILE_SIZE + 5, 14 * TILE_SIZE);
+    uiText.Draw(std::to_string(level).c_str(), TILE_SIZE * 3, 16 * TILE_SIZE - (TILE_SIZE / 2.0));
+
+    // Highscore
+    uiText.Draw("BEST:", TILE_SIZE + 10, 17 * TILE_SIZE);
+    uiText.Draw(std::to_string(GetHighScore()).c_str(), TILE_SIZE * 3, 19 * TILE_SIZE - (TILE_SIZE / 2.0));
 }
 void DrawBabyBox() {
     DrawBGSquareOnTileGrid(screenWidth/TILE_SIZE - 6, screenWidth / TILE_SIZE - 1, 1, 5);

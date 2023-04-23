@@ -153,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\SDL_FontCache.cpp" />
+    <ClCompile Include="src\highscore.cpp" />
     <ClCompile Include="src\sprite_renderer.cpp" />
     <ClCompile Include="src\audio.cpp" />
     <ClCompile Include="src\input.cpp" />
@@ -163,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\SDL_FontCache.h" />
+    <ClInclude Include="src\highscore.h" />
     <ClInclude Include="src\sprite_renderer.h" />
     <ClInclude Include="src\audio.h" />
     <ClInclude Include="src\input.h" />
