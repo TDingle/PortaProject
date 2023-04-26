@@ -91,7 +91,7 @@ std::vector<Vector2Int> GetBlockOffsets(TetrisBlocks type, int rotationIndex = 0
 
 void DrawTile(Sprite sprite, Vector2Int tile);
 
-void DrawBlock(TetrisBlocks offsetBlock, TetrisBlocks spriteBlock, Vector2Int startTilePos);
+void DrawBlock(TetrisBlocks offsetBlock, int offsetBlockDir, TetrisBlocks spriteBlock, Vector2Int startTilePos);
 void DrawBlockAtWorldPos(TetrisBlocks block, Vector2Int worldPos);
 
 extern std::map<TetrisBlocks, std::vector<Vector2Int>> Cells;

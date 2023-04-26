@@ -98,9 +98,20 @@ std::map<TetrisBlocks, std::vector<Vector2Int>> Cells =
 	{ TetrisBlocks(Z), {Vector2Int(-1, 1), Vector2Int(0, 1), Vector2Int(0, 0), Vector2Int(1, 0)}},
 };
 
-std::vector<Vector2Int> GetBlockOffsets(TetrisBlocks type, int rotationIndex) {
+void DoRotation(Vector2Int& vec) {
 	// TODO: rotations done here
-	return Cells[type];
+	
+
+}
+
+std::vector<Vector2Int> GetBlockOffsets(TetrisBlocks type, int rotationIndex) {
+	std::vector<Vector2Int> cells = Cells[type];
+	for (Vector2Int& vec : cells) {
+		for (int i = 0; i < rotationIndex+1; i++) {
+			DoRotation(vec);
+		}
+	}
+	return cells;
 }
 
 void initRenderer() {
@@ -127,8 +138,8 @@ void DrawTile(Sprite sprite, Vector2Int tile) {
 }
 
 
-void DrawBlock(TetrisBlocks offsetBlock,TetrisBlocks spriteBlock, Vector2Int startTilePos) {
-	std::vector<Vector2Int> currentBlockOffsets = GetBlockOffsets(offsetBlock);
+void DrawBlock(TetrisBlocks offsetBlock, int offsetBlockDir, TetrisBlocks spriteBlock, Vector2Int startTilePos) {
+	std::vector<Vector2Int> currentBlockOffsets = GetBlockOffsets(offsetBlock, offsetBlockDir);
 	for (int i = 0; i < currentBlockOffsets.size(); i++) {
 		Vector2Int offset = currentBlockOffsets[i];
 		Vector2Int tileSpaceTile = startTilePos + offset;

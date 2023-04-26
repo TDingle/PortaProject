@@ -89,7 +89,7 @@ void DrawTileMap() {
 			DrawTile(blockSprite, Vector2Int(col, row));
 		}
 	}
-	DrawBlock(activeBlock.type, ghostBlock.type, ghostBlock.pos);
+	DrawBlock(activeBlock.type, activeBlock.direction, ghostBlock.type, ghostBlock.pos);
 }
 
 void ClearGridExceptWalls() {
@@ -308,6 +308,15 @@ void Tiletime() {
 	}
 	else if (isActionPressed(InputAction::DROP)) {
 		SetBlockPos(activeBlock, ghostBlock.pos);
+	}
+	else if (isActionPressed(InputAction::ROTLEFT)) {
+		activeBlock.direction = (activeBlock.direction + 1) % 4;
+	}
+	else if (isActionPressed(InputAction::ROTRIGHT)) {
+		activeBlock.direction = activeBlock.direction - 1;
+		if (activeBlock.direction < 0) {
+			activeBlock.direction = 3;
+		}
 	}
 }
 
