@@ -80,6 +80,30 @@ void SetBlockPos(Block& block, Vector2Int pos) {
 		tilemap[tile.y][tile.x] = block.type;
 	}
 }
+void RotateBlock(Block& block, int lr) {
+	int prevDirection = block.direction;
+	if (lr == -1) {
+		block.direction = (block.direction + 1) % 4;
+	}
+	else if (lr == 1) {
+		block.direction = block.direction - 1;
+		if (block.direction < 0) {
+			block.direction = 3;
+		}
+	}
+
+	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type, prevDirection);
+	// clear previous position
+	for (Vector2Int offset : offsets) {
+		Vector2Int tile = block.pos + offset;
+		tilemap[tile.y][tile.x] = TetrisBlocks::BG;
+	}
+	offsets = GetBlockOffsets(block.type, block.direction);
+	for (Vector2Int offset : offsets) {
+		Vector2Int tile = block.pos + offset;
+		tilemap[tile.y][tile.x] = block.type;
+	}
+}
 
 void DrawTileMap() {
 	for (int row = 0; row < GRID_HEIGHT; row++) {
@@ -310,15 +334,10 @@ void Tiletime() {
 		SetBlockPos(activeBlock, ghostBlock.pos);
 	}
 	else if (isActionPressed(InputAction::ROTLEFT)) {
-		activeBlock.direction = (activeBlock.direction + 1) % 4;
-		SetBlockPos(activeBlock, activeBlock.pos);
+		RotateBlock(activeBlock, -1);
 	}
 	else if (isActionPressed(InputAction::ROTRIGHT)) {
-		activeBlock.direction = activeBlock.direction - 1;
-		if (activeBlock.direction < 0) {
-			activeBlock.direction = 3;
-		}
-		SetBlockPos(activeBlock, activeBlock.pos);
+		RotateBlock(activeBlock, 1);
 	}
 }
 
