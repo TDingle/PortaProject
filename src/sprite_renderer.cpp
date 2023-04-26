@@ -3,6 +3,7 @@
 #include "sprite_renderer.h"
 #include <map>
 #include <vector>
+#include <math.h>
 extern SDL_Renderer* renderer;
 
 Vector2Int gridPosition = Vector2Int(0, 0);
@@ -98,17 +99,43 @@ std::map<TetrisBlocks, std::vector<Vector2Int>> Cells =
 	{ TetrisBlocks(Z), {Vector2Int(-1, 1), Vector2Int(0, 1), Vector2Int(0, 0), Vector2Int(1, 0)}},
 };
 
-void DoRotation(Vector2Int& vec) {
-	// TODO: rotations done here
-	
+int CeilToInt(float x) {
+	float c = ceilf(x);
+	return (int)c;
+}
+int RoundToInt(float x) {
+	float r = roundf(x);
+	return (int)r;
+}
 
+void DoRotation(TetrisBlocks type, Vector2Int& cell) {
+	// TODO: rotations done here
+	int direction = 1;
+	int x;
+	int y;
+	switch (type)
+	{
+	case I:
+	case O:
+		cell.x -= .5f;
+		cell.y -= .5f;
+		x = CeilToInt((cell.x * RotationMatrix[0] * direction) + (cell.y * RotationMatrix[1] * direction));
+		y = CeilToInt((cell.x * RotationMatrix[2] * direction) + (cell.y * RotationMatrix[3] * direction));
+		break;
+
+	default:
+		x = RoundToInt((cell.x * RotationMatrix[0] * direction) + (cell.y * RotationMatrix[1] * direction));
+		y = RoundToInt((cell.x * RotationMatrix[2] * direction) + (cell.y * RotationMatrix[3] * direction));
+		break;
+	}
+	cell = Vector2Int(x, y);
 }
 
 std::vector<Vector2Int> GetBlockOffsets(TetrisBlocks type, int rotationIndex) {
 	std::vector<Vector2Int> cells = Cells[type];
 	for (Vector2Int& vec : cells) {
 		for (int i = 0; i < rotationIndex; i++) {
-			DoRotation(vec);
+			DoRotation(type, vec);
 		}
 	}
 	return cells;
