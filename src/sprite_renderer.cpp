@@ -107,7 +107,7 @@ void DoRotation(Vector2Int& vec) {
 std::vector<Vector2Int> GetBlockOffsets(TetrisBlocks type, int rotationIndex) {
 	std::vector<Vector2Int> cells = Cells[type];
 	for (Vector2Int& vec : cells) {
-		for (int i = 0; i < rotationIndex+1; i++) {
+		for (int i = 0; i < rotationIndex; i++) {
 			DoRotation(vec);
 		}
 	}
