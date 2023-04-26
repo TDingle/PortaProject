@@ -311,12 +311,14 @@ void Tiletime() {
 	}
 	else if (isActionPressed(InputAction::ROTLEFT)) {
 		activeBlock.direction = (activeBlock.direction + 1) % 4;
+		SetBlockPos(activeBlock, activeBlock.pos);
 	}
 	else if (isActionPressed(InputAction::ROTRIGHT)) {
 		activeBlock.direction = activeBlock.direction - 1;
 		if (activeBlock.direction < 0) {
 			activeBlock.direction = 3;
 		}
+		SetBlockPos(activeBlock, activeBlock.pos);
 	}
 }
 
