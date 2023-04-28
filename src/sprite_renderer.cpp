@@ -108,8 +108,8 @@ int RoundToInt(float x) {
 	return (int)r;
 }
 
-void DoRotation(TetrisBlocks type, Vector2Int& cell) {
-	// TODO: rotations done here
+void DoRotation(TetrisBlocks type, Vector2Int& cell_) {
+	float cell[2] = { (float)cell_.x, (float)cell_.y };
 	int direction = 1;
 	int x;
 	int y;
@@ -117,18 +117,18 @@ void DoRotation(TetrisBlocks type, Vector2Int& cell) {
 	{
 	case I:
 	case O:
-		cell.x -= .5f;
-		cell.y -= .5f;
-		x = CeilToInt((cell.x * RotationMatrix[0] * direction) + (cell.y * RotationMatrix[1] * direction));
-		y = CeilToInt((cell.x * RotationMatrix[2] * direction) + (cell.y * RotationMatrix[3] * direction));
+		cell[0] -= .5f;
+		cell[1] -= .5f;
+		x = CeilToInt((cell[0] * RotationMatrix[0] * direction) + (cell[1] * RotationMatrix[1] * direction));
+		y = CeilToInt((cell[0] * RotationMatrix[2] * direction) + (cell[1] * RotationMatrix[3] * direction));
 		break;
 
 	default:
-		x = RoundToInt((cell.x * RotationMatrix[0] * direction) + (cell.y * RotationMatrix[1] * direction));
-		y = RoundToInt((cell.x * RotationMatrix[2] * direction) + (cell.y * RotationMatrix[3] * direction));
+		x = RoundToInt((cell[0] * RotationMatrix[0] * direction) + (cell[1] * RotationMatrix[1] * direction));
+		y = RoundToInt((cell[0] * RotationMatrix[2] * direction) + (cell[1] * RotationMatrix[3] * direction));
 		break;
 	}
-	cell = Vector2Int(x, y);
+	cell_ = Vector2Int(x, y);
 }
 
 std::vector<Vector2Int> GetBlockOffsets(TetrisBlocks type, int rotationIndex) {
