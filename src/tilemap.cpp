@@ -104,6 +104,19 @@ void SetBlockPos(Block& block, Vector2Int pos) {
 		tilemap[tile.y][tile.x] = block.type;
 	}
 }
+
+int Wrap(int input, int min, int max)
+{
+	if (input < min)
+	{
+		return max - (min - input) % (max - min);
+	}
+	else
+	{
+		return min + (input - min) % (max - min);
+	}
+}
+
 void RotateBlock(Block& block, int lr) {
 	int prevDirection = block.direction;
 	if (lr == 1) {
@@ -116,12 +129,12 @@ void RotateBlock(Block& block, int lr) {
 		}
 	}
 
-		std::vector<Vector2Int> offsets = GetBlockOffsets(block.type, prevDirection);
-		// clear previous position
-		for (Vector2Int offset : offsets) {
-			Vector2Int tile = block.pos + offset;
-			tilemap[tile.y][tile.x] = TetrisBlocks::BG;
-		}
+	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type, prevDirection);
+	// clear previous position
+	for (Vector2Int offset : offsets) {
+		Vector2Int tile = block.pos + offset;
+		tilemap[tile.y][tile.x] = TetrisBlocks::BG;
+	}
 	if (isMoveValid(block, Vector2Int(0, 0))) {
 		offsets = GetBlockOffsets(block.type, block.direction);
 		for (Vector2Int offset : offsets) {
@@ -130,12 +143,30 @@ void RotateBlock(Block& block, int lr) {
 		}
 	}
 	else {
-		//if (block.type == I) {
-			//if
-		//}
-		//else {
+		int rotation = block.direction;
+		int wallKickIndex = rotation * 2;
+		if (lr < 0) {
+			wallKickIndex--;
+		}
+		wallKickIndex = Wrap(wallKickIndex, 0, 8);
 
-		//}
+		if (block.type == I) {
+			for (int i = 0; i < 5; i++) {
+				Vector2Int translation = WallKicksI[wallKickIndex][i];
+				if (isMoveValid(block, translation)) {
+					MoveBlock(block, translation);
+				}
+			}
+		}
+		else {
+			for (int i = 0; i < 5; i++) {
+				Vector2Int translation = WallKicksJLOSTZ[wallKickIndex][i];
+				if (isMoveValid(block, translation)) {
+					MoveBlock(block, translation);
+				}
+			}
+		}
+
 
 
 	}
