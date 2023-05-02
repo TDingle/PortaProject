@@ -155,6 +155,7 @@ void RotateBlock(Block& block, int lr) {
 				Vector2Int translation = WallKicksI[wallKickIndex][i];
 				if (isMoveValid(block, translation)) {
 					MoveBlock(block, translation);
+					break;
 				}
 			}
 		}
@@ -163,6 +164,7 @@ void RotateBlock(Block& block, int lr) {
 				Vector2Int translation = WallKicksJLOSTZ[wallKickIndex][i];
 				if (isMoveValid(block, translation)) {
 					MoveBlock(block, translation);
+					break;
 				}
 			}
 		}
