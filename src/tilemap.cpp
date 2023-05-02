@@ -21,6 +21,8 @@ std::vector<Block> inactiveBlocks;
 extern int score;
 extern int level;
 
+bool isMoveValid(Block block, Vector2Int movementOffset);
+
 Vector2Int blockSpawnPos = Vector2Int(GRID_WIDTH / 2, 1);
 
 char tilemap[GRID_HEIGHT][GRID_WIDTH] =
@@ -48,6 +50,28 @@ char tilemap[GRID_HEIGHT][GRID_WIDTH] =
 	{1,0,0,0,0,0,0,0,0,0,0,1},
 	{1,1,1,1,1,1,1,1,1,1,1,1},
 
+};
+
+Vector2Int WallKicksI[8][5] = {
+		{ Vector2Int(0, 0), Vector2Int(-2, 0), Vector2Int(1, 0), Vector2Int(-2,-1), Vector2Int(1, 2) },
+		{ Vector2Int(0, 0), Vector2Int(2, 0), Vector2Int(-1, 0), Vector2Int(2, 1), Vector2Int(-1,-2) },
+		{ Vector2Int(0, 0), Vector2Int(-1, 0), Vector2Int(2, 0), Vector2Int(-1, 2), Vector2Int(2,-1) },
+		{ Vector2Int(0, 0), Vector2Int(1, 0), Vector2Int(-2, 0), Vector2Int(1,-2), Vector2Int(-2, 1) },
+		{ Vector2Int(0, 0), Vector2Int(2, 0), Vector2Int(-1, 0), Vector2Int(2, 1), Vector2Int(-1,-2) },
+		{ Vector2Int(0, 0), Vector2Int(-2, 0), Vector2Int(1, 0), Vector2Int(-2,-1), Vector2Int(1, 2) },
+		{ Vector2Int(0, 0), Vector2Int(1, 0), Vector2Int(-2, 0), Vector2Int(1,-2), Vector2Int(-2, 1) },
+		{ Vector2Int(0, 0), Vector2Int(-1, 0), Vector2Int(2, 0), Vector2Int(-1, 2), Vector2Int(2,-1) },
+};
+
+Vector2Int WallKicksJLOSTZ[8][5] = {
+		{ Vector2Int(0, 0),  Vector2Int(-1, 0),  Vector2Int(-1, 1),  Vector2Int(0,-2),  Vector2Int(-1,-2) },
+		{ Vector2Int(0, 0),  Vector2Int(1, 0),  Vector2Int(1,-1),  Vector2Int(0, 2),  Vector2Int(1, 2) },
+		{ Vector2Int(0, 0),  Vector2Int(1, 0),  Vector2Int(1,-1),  Vector2Int(0, 2),  Vector2Int(1, 2) },
+		{ Vector2Int(0, 0),  Vector2Int(-1, 0),  Vector2Int(-1, 1),  Vector2Int(0,-2),  Vector2Int(-1,-2) },
+		{ Vector2Int(0, 0),  Vector2Int(1, 0),  Vector2Int(1, 1),  Vector2Int(0,-2),  Vector2Int(1,-2) },
+		{ Vector2Int(0, 0),  Vector2Int(-1, 0),  Vector2Int(-1,-1),  Vector2Int(0, 2),  Vector2Int(-1, 2) },
+		{ Vector2Int(0, 0),  Vector2Int(-1, 0),  Vector2Int(-1,-1),  Vector2Int(0, 2),  Vector2Int(-1, 2) },
+		{ Vector2Int(0, 0),  Vector2Int(1, 0),  Vector2Int(1, 1),  Vector2Int(0,-2),  Vector2Int(1,-2) },
 };
 
 void MoveBlock(Block& block, Vector2Int moveVec) {
@@ -82,27 +106,40 @@ void SetBlockPos(Block& block, Vector2Int pos) {
 }
 void RotateBlock(Block& block, int lr) {
 	int prevDirection = block.direction;
-	if (lr == -1) {
+	if (lr == 1) {
 		block.direction = (block.direction + 1) % 4;
 	}
-	else if (lr == 1) {
+	else if (lr == -1) {
 		block.direction = block.direction - 1;
 		if (block.direction < 0) {
 			block.direction = 3;
 		}
 	}
 
-	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type, prevDirection);
-	// clear previous position
-	for (Vector2Int offset : offsets) {
-		Vector2Int tile = block.pos + offset;
-		tilemap[tile.y][tile.x] = TetrisBlocks::BG;
+		std::vector<Vector2Int> offsets = GetBlockOffsets(block.type, prevDirection);
+		// clear previous position
+		for (Vector2Int offset : offsets) {
+			Vector2Int tile = block.pos + offset;
+			tilemap[tile.y][tile.x] = TetrisBlocks::BG;
+		}
+	if (isMoveValid(block, Vector2Int(0, 0))) {
+		offsets = GetBlockOffsets(block.type, block.direction);
+		for (Vector2Int offset : offsets) {
+			Vector2Int tile = block.pos + offset;
+			tilemap[tile.y][tile.x] = block.type;
+		}
 	}
-	offsets = GetBlockOffsets(block.type, block.direction);
-	for (Vector2Int offset : offsets) {
-		Vector2Int tile = block.pos + offset;
-		tilemap[tile.y][tile.x] = block.type;
+	else {
+		//if (block.type == I) {
+			//if
+		//}
+		//else {
+
+		//}
+
+
 	}
+
 }
 
 void DrawTileMap() {
@@ -139,16 +176,23 @@ bool isMoveValid(Block block, Vector2Int movementOffset) {
 
 		// make sure we don't collide with ourself
 		bool isOwnBlock = false;
-		for (Vector2Int offsetAgain : offsets) {
-			if (tileToCheck == offsetAgain + tileCenterPos) isOwnBlock = true;
+		if (movementOffset.x == 0 && movementOffset.y == 0) {
+			
 		}
-		if (isOwnBlock) continue;
+		else {
+			for (Vector2Int offsetAgain : offsets) {
+				if (tileToCheck == offsetAgain + tileCenterPos) isOwnBlock = true;
+			}
 
-		char squareWeAreCollidingWith = tilemap[tileToCheck.y][tileToCheck.x];
-		bool isCollision = !isBlankBlock((TetrisBlocks)squareWeAreCollidingWith);
-		if (isCollision) {
-			return false;
+			if (isOwnBlock) continue;
+			
 		}
+			char squareWeAreCollidingWith = tilemap[tileToCheck.y][tileToCheck.x];
+			bool isCollision = !isBlankBlock((TetrisBlocks)squareWeAreCollidingWith);
+			if (isCollision) {
+				return false;
+			}
+		
 	}
 	return true;
 }
