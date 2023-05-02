@@ -191,6 +191,16 @@ void ClearGridExceptWalls() {
 		}
 	}
 }
+void ReAffirmGridWalls() {
+	for (int col = 0; col < GRID_WIDTH; col++) {
+		tilemap[0][col] = TetrisBlocks::Wall;
+		tilemap[GRID_HEIGHT-1][col] = TetrisBlocks::Wall;
+	}
+	for (int row = 0; row < GRID_HEIGHT; row++) {
+		tilemap[row][0] = TetrisBlocks::Wall;
+		tilemap[row][GRID_WIDTH-1] = TetrisBlocks::Wall;
+	}
+}
 void UpdateGridWithBlock(Block block) {
 	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type, block.direction);
 	for (Vector2Int offset : offsets) {
@@ -392,7 +402,6 @@ void Tiletime() {
 	}
 	previousTime = seconds;
 
-
 	if (isActionPressed(InputAction::LEFT)) {
 		TryMoveActiveBlock(InputAction::LEFT);
 	}
@@ -414,6 +423,7 @@ void Tiletime() {
 	else if (isActionPressed(InputAction::ROTRIGHT)) {
 		RotateBlock(activeBlock, 1);
 	}
+	ReAffirmGridWalls();
 }
 
 
