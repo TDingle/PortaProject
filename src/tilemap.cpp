@@ -210,6 +210,13 @@ void UpdateGridWithBlock(Block block) {
 		tilemap[fillSquare.y][fillSquare.x] = block.type;
 	}
 }
+void ClearGridWithBlock(Block block) {
+	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type, block.direction);
+	for (Vector2Int offset : offsets) {
+		Vector2Int fillSquare = block.pos + offset;
+		tilemap[fillSquare.y][fillSquare.x] = TetrisBlocks::BG;
+	}
+}
 bool isMoveValid(Block block, Vector2Int movementOffset) {
 	std::vector<Vector2Int> offsets = GetBlockOffsets(block.type, block.direction);
 	Vector2Int tileCenterPos = block.pos;
@@ -371,6 +378,8 @@ void SwapBlock(InputAction key) {
 		if (canSwap) {//canswap needs to check if the player has already swapped before the active piece has been placed
 
 			if (noHoldBlock == false) {//need some way of checking if the hold block is there
+				ClearGridWithBlock(activeBlock);
+
 				Block holdBlockcopy = holdBlock;
 				holdBlock = activeBlock;
 
@@ -379,17 +388,15 @@ void SwapBlock(InputAction key) {
 
 				activeBlock = holdBlockcopy;
 
-				
-				
 			}
 			else {
+				ClearGridWithBlock(activeBlock);
 				holdBlock = activeBlock;
 				holdBlock.pos = blockSpawnPos;
 
 				activeBlock = nextBlock;
 				
 				noHoldBlock = false;
-				
 			}
 			canSwap = false;
 		}
